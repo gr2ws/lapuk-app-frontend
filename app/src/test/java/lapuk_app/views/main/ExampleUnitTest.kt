@@ -1,4 +1,4 @@
-package com.example.lapuk_app
+package lapuk_app.views.main
 
 import org.junit.Test
 

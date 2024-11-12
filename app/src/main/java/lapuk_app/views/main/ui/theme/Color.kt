@@ -1,4 +1,4 @@
-package com.example.lapuk_app.ui.theme
+package lapuk_app.views.main.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
