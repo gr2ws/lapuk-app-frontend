@@ -35,5 +35,3 @@ fun ShowLogo(color: Color, withText: Boolean) {
         }
     }
 }
-
-
