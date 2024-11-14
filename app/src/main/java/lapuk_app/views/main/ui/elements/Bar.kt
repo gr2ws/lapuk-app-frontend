@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.lapuk_app.R
 import lapuk_app.views.main.ui.theme.LapukTheme
 import lapuk_app.views.main.ui.theme.br1
@@ -42,11 +43,17 @@ fun TopBar() {
 
 
 @Composable
-fun BottomBar() {
+fun BottomBar(navController: NavController) {
     val selectedItemState = remember { mutableIntStateOf(0) }
     var selectedItem by remember { selectedItemState }
 
-    val items = listOf("Home", "Segregate", "Articles", "Heatmap", "Info")
+    val items = listOf(
+        "Home",
+        "Segregate",
+        "Articles",
+        "Heatmap",
+        "Info"
+    )
 
     val icons = listOf(
         painterResource(id = R.drawable.home),
@@ -54,6 +61,14 @@ fun BottomBar() {
         painterResource(id = R.drawable.articles),
         painterResource(id = R.drawable.heatmaps),
         painterResource(id = R.drawable.infocenter)
+    )
+
+    val navigationLabel = listOf(
+        "home",
+        "segregate",
+        "articles",
+        "heatmap",
+        "info"
     )
 
     NavigationBar(
@@ -73,7 +88,16 @@ fun BottomBar() {
                 },
                 label = { Text(item) },
                 selected = selectedItem == index,
-                onClick = { selectedItem = index },
+                onClick = {
+                    selectedItem = index
+                    navController.navigate(navigationLabel[index]) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
                 colors = NavigationBarItemColors(
                     selectedIconColor = Color.White,
                     selectedTextColor = Color.Black,
