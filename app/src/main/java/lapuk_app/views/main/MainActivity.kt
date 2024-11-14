@@ -21,10 +21,12 @@ import lapuk_app.views.main.ui.theme.LapukTheme
 import lapuk_app.views.main.ui.theme.br1
 import lapuk_app.views.main.ui.theme.br5
 
+@Suppress("DEPRECATION") // remove deprecation warning
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
         window.statusBarColor = br5.toArgb()
         window.navigationBarColor = br1.toArgb()
 
