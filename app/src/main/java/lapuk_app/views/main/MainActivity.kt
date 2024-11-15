@@ -43,7 +43,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true,
+    device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
+)
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
@@ -61,7 +63,6 @@ fun MainScreen() {
                 Box(
                     modifier = Modifier
                         .padding(innerPadding)
-                        .fillMaxSize()
                         .shadow(2.dp)
                         .zIndex(1f)
                 ) {

@@ -35,6 +35,7 @@ fun TopBar() {
                 .fillMaxWidth()
                 .fillMaxHeight(.10f)
                 .background(br5)
+                .offset(y = 12.5.dp)
         ) {
             ShowLogo(Color.White, false)
         }
@@ -74,8 +75,7 @@ fun BottomBar(navController: NavController) {
     NavigationBar(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(.10f)
-            .offset(y = 3.dp),
+            .fillMaxHeight(.13f),
         containerColor = br1,
     ) {
         items.forEachIndexed { index, item ->
