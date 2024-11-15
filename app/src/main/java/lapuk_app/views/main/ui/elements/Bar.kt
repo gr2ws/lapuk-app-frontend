@@ -45,7 +45,7 @@ fun TopBar() {
 
 @Composable
 fun BottomBar(navController: NavController) {
-    val selectedItemState = remember { mutableIntStateOf(0) }
+    val selectedItemState = remember { mutableIntStateOf(1) }
     var selectedItem by remember { selectedItemState }
 
     val items = listOf(

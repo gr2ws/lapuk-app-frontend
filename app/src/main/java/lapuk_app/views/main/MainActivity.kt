@@ -3,7 +3,6 @@ package lapuk_app.views.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,11 +20,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import lapuk_app.views.main.ui.elements.BottomBar
 import lapuk_app.views.main.ui.elements.TopBar
+import lapuk_app.views.main.ui.pages.SegregatePage
 import lapuk_app.views.main.ui.theme.LapukTheme
 import lapuk_app.views.main.ui.theme.br1
-import lapuk_app.views.main.ui.theme.br2
-import lapuk_app.views.main.ui.theme.br3
-import lapuk_app.views.main.ui.theme.br4
 import lapuk_app.views.main.ui.theme.br5
 
 @Suppress("DEPRECATION") // remove deprecation warning
@@ -65,46 +62,27 @@ fun MainScreen() {
                         .padding(innerPadding)
                         .shadow(2.dp)
                         .zIndex(1f)
+                        .fillMaxSize()
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = "home",
+                        startDestination = "segregate",
                         modifier = Modifier.fillMaxSize()
                     ) {
                         composable("home") {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(br1)
-                            )
+                            TODO()
                         }
                         composable("segregate") {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(br2)
-                            )
+                            SegregatePage()
                         }
                         composable("articles") {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(br3)
-                            )
+                            TODO()
                         }
                         composable("heatmap") {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(br4)
-                            )
+                            TODO()
                         }
                         composable("info") {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(br5)
-                            )
+                            TODO()
                         }
                     }
                 }
