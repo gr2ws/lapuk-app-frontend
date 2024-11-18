@@ -2,6 +2,7 @@ package lapuk_app.views.main.ui.pages
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -14,18 +15,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.lapuk_app.R
-import lapuk_app.views.main.ui.theme.Typography
+import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br5
 
 // * TODO: show column of list of content
@@ -63,14 +63,21 @@ fun SegregatePage() {
                 .align(Alignment.BottomEnd)
                 .padding(5.dp)
         ) {
-            Button(modifier = Modifier
-                .size(70.dp)
-                .background(color = Color.Transparent)
-                .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp)),
-                colors = ButtonDefaults.buttonColors(containerColor = br5),
-                shape = RoundedCornerShape(20.dp),
-                onClick = { TODO("Open Camera") }) {
-                Text("+")
+            IconButton(
+                modifier = Modifier
+                    .size(70.dp)
+                    .border(3.dp, br5, shape = RoundedCornerShape(20.dp))
+                    .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
+                    .background(br3, shape = RoundedCornerShape(20.dp)),
+                onClick = { TODO("Open Camera") }
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .fillMaxSize(.85f),
+                    painter = painterResource(id = R.drawable.add),
+                    contentDescription = "add image",
+                    tint = br5
+                )
             }
         }
     }
@@ -104,14 +111,15 @@ fun ColumnItem(index: Int) {
                     text = "Item $index"
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                Button(modifier = Modifier
+                IconButton(modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .height(40.dp)
-                    .width(90.dp), colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent
-                ), onClick = { TODO("Delete image") }) {
-                    Text(
-                        text = "Delete", style = Typography.titleSmall, color = Color.Black
+                    .height(90.dp)
+                    .width(70.dp),
+                    onClick = { TODO("Delete image") }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.delete),
+                        contentDescription = "delete image",
+                        tint = br5
                     )
                 }
             }
