@@ -20,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import lapuk_app.views.main.ui.elements.BottomBar
 import lapuk_app.views.main.ui.elements.TopBar
+import lapuk_app.views.main.ui.pages.PrivacyPolicyPage
 import lapuk_app.views.main.ui.pages.SegregatePage
 import lapuk_app.views.main.ui.theme.LapukTheme
 import lapuk_app.views.main.ui.theme.br1
@@ -82,7 +83,9 @@ fun MainScreen() {
                             TODO()
                         }
                         composable("info") {
-                            TODO()
+                            composable("privacy-policy") {
+                                PrivacyPolicyPage(navController)
+                            }
                         }
                     }
                 }
