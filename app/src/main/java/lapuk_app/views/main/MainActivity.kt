@@ -40,17 +40,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview(showBackground = true,
-    device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
+@Preview(
+    showBackground = true, device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
 )
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
 
     LapukTheme {
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize(),
+        Scaffold(modifier = Modifier.fillMaxSize(),
 
             topBar = {
                 TopBar()
@@ -90,8 +88,7 @@ fun MainScreen() {
 
             bottomBar = {
                 BottomBar(navController)
-            }
-        )
+            })
     }
 }
 

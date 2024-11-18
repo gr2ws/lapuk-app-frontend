@@ -42,18 +42,13 @@ fun TopBar() {
     }
 }
 
-
 @Composable
 fun BottomBar(navController: NavController) {
     val selectedItemState = remember { mutableIntStateOf(1) }
     var selectedItem by remember { selectedItemState }
 
     val items = listOf(
-        "Home",
-        "Segregate",
-        "Articles",
-        "Heatmap",
-        "Info"
+        "Home", "Segregate", "Articles", "Heatmap", "Info"
     )
 
     val icons = listOf(
@@ -65,11 +60,7 @@ fun BottomBar(navController: NavController) {
     )
 
     val navigationLabel = listOf(
-        "home",
-        "segregate",
-        "articles",
-        "heatmap",
-        "info"
+        "home", "segregate", "articles", "heatmap", "info"
     )
 
     NavigationBar(
@@ -79,34 +70,28 @@ fun BottomBar(navController: NavController) {
         containerColor = br1,
     ) {
         items.forEachIndexed { index, item ->
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        icons[index],
-                        contentDescription = item
-                    )
-                },
-                label = { Text(item) },
-                selected = selectedItem == index,
-                onClick = {
-                    selectedItem = index
-                    navController.navigate(navigationLabel[index]) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-                colors = NavigationBarItemColors(
-                    selectedIconColor = Color.White,
-                    selectedTextColor = Color.Black,
-                    selectedIndicatorColor = br5,
-                    unselectedIconColor = Color.Black,
-                    unselectedTextColor = Color.Black,
-                    disabledIconColor = Color.Red,
-                    disabledTextColor = Color.Red
+            NavigationBarItem(icon = {
+                Icon(
+                    icons[index], contentDescription = item
                 )
+            }, label = { Text(item) }, selected = selectedItem == index, onClick = {
+                selectedItem = index
+                navController.navigate(navigationLabel[index]) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }, colors = NavigationBarItemColors(
+                selectedIconColor = Color.White,
+                selectedTextColor = Color.Black,
+                selectedIndicatorColor = br5,
+                unselectedIconColor = Color.Black,
+                unselectedTextColor = Color.Black,
+                disabledIconColor = Color.Red,
+                disabledTextColor = Color.Red
+            )
             )
         }
     }
