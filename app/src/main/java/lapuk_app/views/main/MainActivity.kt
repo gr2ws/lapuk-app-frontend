@@ -3,6 +3,7 @@ package lapuk_app.views.main
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -26,12 +27,14 @@ import lapuk_app.views.main.ui.theme.LapukTheme
 import lapuk_app.views.main.ui.theme.br1
 import lapuk_app.views.main.ui.theme.br5
 
-@Suppress("DEPRECATION") // remove deprecation warning
+@Suppress("DEPRECATION") // suppress deprecation warning for window.statusBarColor
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
+        enableEdgeToEdge()
         window.statusBarColor = br5.toArgb()
         window.navigationBarColor = br1.toArgb()
 
@@ -41,17 +44,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview(showBackground = true,
-    device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
+@Preview(
+    showBackground = true, device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
 )
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
 
     LapukTheme {
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize(),
+        Scaffold(modifier = Modifier.fillMaxSize(),
 
             topBar = {
                 TopBar()
@@ -95,8 +96,7 @@ fun MainScreen() {
 
             bottomBar = {
                 BottomBar(navController)
-            }
-        )
+            })
     }
 }
 
