@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.lapuk_app.R
 import lapuk_app.views.main.ui.theme.br3
@@ -41,8 +42,6 @@ import lapuk_app.views.main.ui.theme.br5
 // TODO: make backend to classify/detect image
 // TODO: send image (ask if sure) (show error if no internet, no server)
 // TODO: receive and show
-
-// SideEffect {} to refresh composables
 
 @Composable
 fun SegregatePage() {
