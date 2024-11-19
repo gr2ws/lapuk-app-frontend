@@ -66,7 +66,7 @@ fun BottomBar(navController: NavController) {
     NavigationBar(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(.13f),
+            .fillMaxHeight(.135f),
         containerColor = br1,
     ) {
         items.forEachIndexed { index, item ->

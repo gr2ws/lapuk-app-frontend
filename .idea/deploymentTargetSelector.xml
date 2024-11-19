@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-11-15T09:36:11.683069400Z">
+        <DropdownSelection timestamp="2024-11-19T10:11:46.755035400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=dadc4b47" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\HP\.android\avd\TestPhone.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -37,7 +37,7 @@
       </SelectionState>
       <SelectionState runConfigName="MainScreen">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-11-15T09:47:25.759864100Z">
+        <DropdownSelection timestamp="2024-11-19T10:06:34.739869500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\HP\.android\avd\TestPhone.avd" />
