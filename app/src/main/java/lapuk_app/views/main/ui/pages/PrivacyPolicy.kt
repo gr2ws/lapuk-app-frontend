@@ -33,21 +33,29 @@ fun PrivacyPolicyPage() {
 
     var currentPage by remember { mutableIntStateOf(1) }
 
-    val bodyPart1 by remember { mutableStateOf("""
+    val bodyPart1 by remember {
+        mutableStateOf(
+            """
         The LAPUK app and its creators greatly respect its user’s privacy and is committed to protecting their data. The app collects little to no personal information, especially as the app is only meant for waste detection purposes.
 
         Images taken, uploaded, and processed in the SEGREGATE option are maintained only in the local database of the user’s device to service statistical requests on the user’s waste items.
-    """.trimIndent()) }
+    """.trimIndent()
+        )
+    }
 
     val pageLabel1 by remember { mutableStateOf("Page 1 of 2") }
 
-    val bodyPart2 by remember { mutableStateOf("""
+    val bodyPart2 by remember {
+        mutableStateOf(
+            """
        Any contact details recorded via the CONTACT US option is kept STRICTLY confidential, and is used purely to manage app impressions and apply suggestions (if needed).
        
        Rest assured that the creators of the LAPUK app will never share your information with third-party organizations.
-    """.trimIndent()) }
+    """.trimIndent()
+        )
+    }
 
-    val pageLabel2 by remember { mutableStateOf("Page 2 of 2")}
+    val pageLabel2 by remember { mutableStateOf("Page 2 of 2") }
 
 
     Column(
@@ -65,8 +73,7 @@ fun PrivacyPolicyPage() {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                modifier = Modifier
-                    .padding(12.dp),
+                modifier = Modifier.padding(12.dp),
                 text = "PRIVACY POLICY STATEMENT",
                 style = Typography.titleSmall,
                 textAlign = TextAlign.Center
@@ -75,23 +82,20 @@ fun PrivacyPolicyPage() {
 
         //body
         Box(
-            modifier = Modifier.padding(vertical = 18.dp),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.padding(vertical = 18.dp), contentAlignment = Alignment.Center
         ) {
             Text(
-                modifier = Modifier.padding(24.dp),
-                text =
-                    if (currentPage == 1) { bodyPart1 }
-                    else { bodyPart2 },
-                style = Typography.bodyMedium,
-                textAlign = TextAlign.Center
+                modifier = Modifier.padding(24.dp), text = if (currentPage == 1) {
+                    bodyPart1
+                } else {
+                    bodyPart2
+                }, style = Typography.bodyMedium, textAlign = TextAlign.Center
             )
         }
 
         // navigation
         Box(
-            modifier = Modifier.padding(vertical = 18.dp),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.padding(vertical = 18.dp), contentAlignment = Alignment.Center
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -106,19 +110,20 @@ fun PrivacyPolicyPage() {
                     modifier = Modifier
                         .size(24.dp)
                         .clickable(enabled = currentPage == 2) {
-                            if (currentPage == 2) { currentPage -= 1 }
+                            if (currentPage == 2) {
+                                currentPage -= 1
+                            }
                         },
                     tint = if (currentPage == 2) Color.Black else Color.Gray
                 )
 
                 // [PAGE LABEL] //
                 Text(
-                    modifier = Modifier
-                        .padding(12.dp),
-                    text =
-                        if (currentPage == 1) { pageLabel1 }
-                        else { pageLabel2 },
-                    fontSize = 14.sp
+                    modifier = Modifier.padding(12.dp), text = if (currentPage == 1) {
+                        pageLabel1
+                    } else {
+                        pageLabel2
+                    }, fontSize = 14.sp
                 )
 
                 // [RIGHT CHEVRON] //
@@ -128,7 +133,9 @@ fun PrivacyPolicyPage() {
                     modifier = Modifier
                         .size(24.dp)
                         .clickable(enabled = currentPage == 1) {
-                            if (currentPage == 1) { currentPage += 1 }
+                            if (currentPage == 1) {
+                                currentPage += 1
+                            }
                         },
                     tint = if (currentPage == 1) Color.Black else Color.Gray
                 )
