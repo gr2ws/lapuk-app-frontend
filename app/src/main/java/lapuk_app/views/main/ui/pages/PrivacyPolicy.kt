@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -30,23 +31,23 @@ import lapuk_app.views.main.ui.theme.Typography
 @Composable
 fun PrivacyPolicyPage() {
 
-    var currentPage by remember { mutableStateOf(1) }
+    var currentPage by remember { mutableIntStateOf(1) }
 
-    var bodyPart1 by remember { mutableStateOf("""
+    val bodyPart1 by remember { mutableStateOf("""
         The LAPUK app and its creators greatly respect its user’s privacy and is committed to protecting their data. The app collects little to no personal information, especially as the app is only meant for waste detection purposes.
 
         Images taken, uploaded, and processed in the SEGREGATE option are maintained only in the local database of the user’s device to service statistical requests on the user’s waste items.
     """.trimIndent()) }
 
-    var pageLabel1 by remember { mutableStateOf("Page 1 of 2") }
+    val pageLabel1 by remember { mutableStateOf("Page 1 of 2") }
 
-    var bodyPart2 by remember { mutableStateOf("""
+    val bodyPart2 by remember { mutableStateOf("""
        Any contact details recorded via the CONTACT US option is kept STRICTLY confidential, and is used purely to manage app impressions and apply suggestions (if needed).
        
        Rest assured that the creators of the LAPUK app will never share your information with third-party organizations.
     """.trimIndent()) }
 
-    var pageLabel2 by remember { mutableStateOf("Page 2 of 2")}
+    val pageLabel2 by remember { mutableStateOf("Page 2 of 2")}
 
 
     Column(
