@@ -20,6 +20,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import lapuk_app.views.main.ui.elements.BottomBar
 import lapuk_app.views.main.ui.elements.TopBar
+import lapuk_app.views.main.ui.pages.ContactUsPage
 import lapuk_app.views.main.ui.pages.PrivacyPolicyPage
 import lapuk_app.views.main.ui.pages.SegregatePage
 import lapuk_app.views.main.ui.theme.LapukTheme
@@ -68,7 +69,8 @@ fun MainScreen() {
                     NavHost(
                         navController = navController,
                         //startDestination = "segregate",
-                        startDestination = "info/privacy-policy",
+                        //startDestination = "info/privacy-policy",
+                        startDestination = "info/contact-us",
                         modifier = Modifier.fillMaxSize()
                     ) {
                         composable("home") {
@@ -84,10 +86,13 @@ fun MainScreen() {
                             TODO()
                         }
                         composable("info") {
-
+                            TODO()
                         }
                         composable("info/privacy-policy") {
                             PrivacyPolicyPage()
+                        }
+                        composable("info/contact-us") {
+                            ContactUsPage()
                         }
                     }
                 }
