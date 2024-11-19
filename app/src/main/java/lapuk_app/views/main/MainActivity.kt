@@ -69,7 +69,7 @@ fun MainScreen() {
                     NavHost(
                         navController = navController,
                         //startDestination = "segregate",
-                        startDestination = "info/privacy-policy",
+                        startDestination = "segregate",
                         modifier = Modifier.fillMaxSize()
                     ) {
                         composable("home") {
@@ -85,7 +85,7 @@ fun MainScreen() {
                             TODO()
                         }
                         composable("info") {
-
+                            TODO()
                         }
                         composable("info/privacy-policy") {
                             PrivacyPolicyPage()
