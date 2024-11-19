@@ -11,7 +11,7 @@ val Typography = Typography(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        lineHeight = 24.sp,
+        lineHeight = 16.sp * 1.8,
         letterSpacing = 0.5.sp
     ),
 
@@ -19,7 +19,7 @@ val Typography = Typography(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        lineHeight = 20.sp,
+        lineHeight = 14.sp * 1.8,
         letterSpacing = 0.3.sp
     ),
 
@@ -27,7 +27,7 @@ val Typography = Typography(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
-        lineHeight = 16.sp,
+        lineHeight = 12.sp * 1.8,
         letterSpacing = 0.2.sp
     ),
 
@@ -36,6 +36,22 @@ val Typography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 60.sp,
         lineHeight = 28.sp,
+        letterSpacing = 0.sp
+    ),
+
+    titleMedium = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Bold,
+        fontSize = 48.sp,
+        lineHeight = 28.sp,
+        letterSpacing = 0.sp
+    ),
+
+    titleSmall = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Bold,
+        fontSize = 36.sp,
+        lineHeight = 36.sp * 1.5,
         letterSpacing = 0.sp
     )
 )
