@@ -1,7 +1,10 @@
 package lapuk_app.views.main.ui.pages
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -74,13 +78,17 @@ fun ContactUsPage(){
             )
         }
 
+        val context = LocalContext.current
         //button
         Box(
             modifier = Modifier
                 .padding(vertical = 26.dp, horizontal = 12.dp)
                 .height(88.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(color = br4),
+                .background(color = br4)
+                .clickable {
+                    openGmail(context)
+                },
             contentAlignment = Alignment.Center
         ) {
             Row(
@@ -135,4 +143,18 @@ fun ContactUsPage(){
             )
         }
     }
+}
+
+fun openGmail(context: Context) {
+
+    val recipientEmail = "lanzimalto@su.edu.ph"
+    val intent = Intent(Intent.ACTION_SEND).apply {
+        putExtra(Intent.EXTRA_EMAIL, arrayOf(recipientEmail))
+        putExtra(Intent.EXTRA_SUBJECT, "Comment/Suggestion/Complaint")
+        putExtra(Intent.EXTRA_TEXT, "Dear LAPUK Team:\n\n [Insert your message here]")
+        type = "message/rfc822"
+    }
+
+    // Launch Gmail or show a chooser for available email clients
+    context.startActivity(Intent.createChooser(intent, "Choose an Email client:"))
 }
