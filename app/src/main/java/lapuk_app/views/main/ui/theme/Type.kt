@@ -7,11 +7,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 val Typography = Typography(
+
     bodyLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
-        lineHeight = 16.sp * 1.8,
+        lineHeight = 16.sp * 2.0,
         letterSpacing = 0.5.sp
     ),
 
@@ -52,6 +53,13 @@ val Typography = Typography(
         fontWeight = FontWeight.Bold,
         fontSize = 36.sp,
         lineHeight = 36.sp * 1.5,
+        letterSpacing = 0.sp
+    ),
+
+    labelLarge = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
         letterSpacing = 0.sp
     )
 )

@@ -1,25 +1,54 @@
 package lapuk_app.views.main.ui.pages
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults.shape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.lapuk_app.R
 import lapuk_app.views.main.ui.theme.Typography
+import lapuk_app.views.main.ui.theme.br4
+import lapuk_app.views.main.ui.theme.wh1
+import androidx.compose.ui.text.TextStyle
 
+@Preview(showBackground = true,
+    device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
+)
 @Composable
 fun ContactUsPage(){
-    Column() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 52.dp, horizontal = 16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally) {
 
         //title
         Box(
             modifier = Modifier
-            .padding(vertical = 18.dp)
-            .fillMaxWidth(),
+                .padding(vertical = 40.dp)
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -31,30 +60,60 @@ fun ContactUsPage(){
         //body
         Box(
             modifier = Modifier
-                .padding(vertical = 18.dp)
+                .padding(vertical = 20.dp, horizontal = 34.dp)
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                style = Typography.bodyMedium,
+                style = Typography.bodyLarge,
                 text =
                     """
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur
-                    """.trimIndent()
+                        For any comments, suggestions, or business inquiries, feel free to send us a message via GMail.
+                    """.trimIndent(),
+                textAlign = TextAlign.Center
             )
         }
 
         //button
         Box(
             modifier = Modifier
-                .padding(vertical = 18.dp)
-                .fillMaxWidth(),
+                .padding(vertical = 26.dp, horizontal = 12.dp)
+                .height(88.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(color = br4),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                style = Typography.titleSmall,
-                text = "Insert Button Here"
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(shape)
+                        .background(Color.White),
+                    contentAlignment = Alignment.Center
+                )
+                {
+                    Image(
+                        painter = painterResource(id = R.drawable.google),
+                        contentDescription = "A google logo for gmails",
+                        modifier = Modifier.size(46.dp)
+                    )
+                }
+                Text(
+                    style = TextStyle(
+                        fontFamily = FontFamily.SansSerif,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 15.sp
+                    ),
+                    color = wh1,
+                    text = "Send an Email to the LAPUK team",
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                )
+            }
         }
 
         //bottom-text
@@ -65,11 +124,14 @@ fun ContactUsPage(){
             contentAlignment = Alignment.Center
         ) {
             Text(
-                style = Typography.bodyMedium,
+                modifier = Modifier
+                    .padding(horizontal = 36.dp),
+                style = Typography.bodyLarge,
                 text =
                 """
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                """.trimIndent()
+                    Your thoughts are all greatly appreciated!
+                """.trimIndent(),
+                textAlign = TextAlign.Center
             )
         }
     }
