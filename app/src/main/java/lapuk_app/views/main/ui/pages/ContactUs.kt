@@ -154,7 +154,6 @@ fun openGmail(context: Context) {
         putExtra(Intent.EXTRA_TEXT, "Dear LAPUK Team:\n\n [Insert your message here]")
         type = "message/rfc822"
     }
-
     // Launch Gmail or show a chooser for available email clients
     context.startActivity(Intent.createChooser(intent, "Choose an Email client:"))
 }
