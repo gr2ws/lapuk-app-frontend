@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 
@@ -23,7 +22,7 @@ fun TakeImagePage() {
 
 @Composable
 fun CameraPreview() {
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
 
     AndroidView(factory = { context ->
@@ -35,7 +34,7 @@ fun CameraPreview() {
         cameraProviderFuture.addListener({
             cameraProvider = cameraProviderFuture.get()
             val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(previewView.surfaceProvider)
+                it.surfaceProvider = previewView.surfaceProvider
             }
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try {
