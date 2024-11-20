@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,6 +30,10 @@ import lapuk_app.views.main.ui.theme.br5
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Thread.sleep(3000)
+        installSplashScreen().apply { setOnExitAnimationListener { splashScreenView ->
+            // Call remove() when animation is finished to remove splash screen
+            splashScreenView.remove()}
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         window.statusBarColor = br5.toArgb()
@@ -90,7 +95,7 @@ fun MainScreen() {
                 BottomBar(navController)
             })
     }
-}
+}}
 
 
 
