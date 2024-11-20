@@ -23,8 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.lapuk_app.R
 import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br4
@@ -44,7 +44,7 @@ import lapuk_app.views.main.ui.theme.br5
 // TODO: receive and show
 
 @Composable
-fun SegregatePage() {
+fun SegregatePage(navController: NavController) {
     val itemCount = 0
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
@@ -81,7 +81,15 @@ fun SegregatePage() {
                 .border(3.dp, br5, shape = RoundedCornerShape(20.dp))
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
                 .background(br3, shape = RoundedCornerShape(20.dp)),
-                onClick = { TODO("Open Camera") }) {
+                onClick = {
+                    navController.navigate("segregate/take-image") {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }) {
                 Icon(
                     modifier = Modifier.fillMaxSize(.85f),
                     painter = painterResource(id = R.drawable.add),

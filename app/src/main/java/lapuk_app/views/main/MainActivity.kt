@@ -23,6 +23,7 @@ import lapuk_app.views.main.ui.elements.BottomBar
 import lapuk_app.views.main.ui.elements.TopBar
 import lapuk_app.views.main.ui.pages.PrivacyPolicyPage
 import lapuk_app.views.main.ui.pages.SegregatePage
+import lapuk_app.views.main.ui.pages.TakeImagePage
 import lapuk_app.views.main.ui.theme.LapukTheme
 import lapuk_app.views.main.ui.theme.br1
 import lapuk_app.views.main.ui.theme.br5
@@ -68,7 +69,6 @@ fun MainScreen() {
                 ) {
                     NavHost(
                         navController = navController,
-                        //startDestination = "segregate",
                         startDestination = "segregate",
                         modifier = Modifier.fillMaxSize()
                     ) {
@@ -76,7 +76,10 @@ fun MainScreen() {
                             TODO()
                         }
                         composable("segregate") {
-                            SegregatePage()
+                            SegregatePage(navController)
+                        }
+                        composable("segregate/take-image") {
+                            TakeImagePage()
                         }
                         composable("articles") {
                             TODO()
