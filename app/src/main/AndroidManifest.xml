@@ -12,7 +12,6 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.LapukApp"
             tools:targetApi="31">
-
         <activity
                 android:name="lapuk_app.views.main.MainActivity"
                 android:theme="@style/Theme.LapukApp.SplashScreen"
