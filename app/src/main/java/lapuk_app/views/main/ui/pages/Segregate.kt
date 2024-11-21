@@ -80,16 +80,15 @@ fun SegregatePage(navController: NavController) {
                 .size(70.dp)
                 .border(3.dp, br5, shape = RoundedCornerShape(20.dp))
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
-                .background(br3, shape = RoundedCornerShape(20.dp)),
-                onClick = {
-                    navController.navigate("segregate/take-image") {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
+                .background(br3, shape = RoundedCornerShape(20.dp)), onClick = {
+                navController.navigate("segregate/take-image") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
                     }
-                }) {
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }) {
                 Icon(
                     modifier = Modifier.fillMaxSize(.85f),
                     painter = painterResource(id = R.drawable.add),

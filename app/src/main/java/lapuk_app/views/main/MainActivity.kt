@@ -70,7 +70,7 @@ fun MainScreen() {
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = "segregate",
+                        startDestination = "segregate/take-image",
                         modifier = Modifier.fillMaxSize()
                     ) {
                         composable("home") {
@@ -80,7 +80,7 @@ fun MainScreen() {
                             SegregatePage(navController)
                         }
                         composable("segregate/take-image") {
-                            TakeImagePage()
+                            TakeImagePage(navController)
                         }
                         composable("articles") {
                             TODO()
