@@ -5,16 +5,6 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-val br1 = Color(0xFFEDE0D4) //EDE0D4
-val br2 = Color(0xFFE6CCB2) //E6CCB2
-val br3 = Color(0xFFDDB892) //DDB892
-val br4 = Color(0xFFB08968) //B08968
-val br5 = Color(0xFF7F5539) //7F5539
-val br6 = Color(0xFF9C6644) //9C6644
-val wh1 = Color(0xFFF5F5F5) //F5F5F5
-
-internal val colorScheme = lightColorScheme(
-    primary = br5, // headers, selected items, buttons
 // Define custom colors for the theme
 val br1 = Color(0xFFEDE0D4) // Background color
 val br2 = Color(0xFFE6CCB2) // Surface color
@@ -37,9 +27,8 @@ private val colorScheme = lightColorScheme(
     background = br1,
     onBackground = Color.Black,
 
-    surface = br2, // menu backgrounds
-    onSurface = Color.Black
-
+    surface = br2,
+    onSurface = Color.Black,
 )
 
 /**

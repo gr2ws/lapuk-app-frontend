@@ -22,15 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.lapuk_app.R
 import lapuk_app.views.main.ui.theme.Typography
 
-@Preview(showBackground = true,
-    device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
-)
+
 @Composable
 fun PrivacyPolicyPage() {
 
