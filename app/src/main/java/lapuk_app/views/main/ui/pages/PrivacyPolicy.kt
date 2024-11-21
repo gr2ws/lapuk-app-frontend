@@ -144,4 +144,3 @@ fun PrivacyPolicyPage() {
 
     }
 }
-

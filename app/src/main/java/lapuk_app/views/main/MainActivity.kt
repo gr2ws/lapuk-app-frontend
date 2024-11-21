@@ -82,6 +82,9 @@ fun MainScreen() {
                         composable("segregate/take-image") {
                             TakeImagePage(navController)
                         }
+                        composable("segregate/take-image/prompt") {
+                            TODO()
+                        }
                         composable("articles") {
                             TODO()
                         }
@@ -103,6 +106,3 @@ fun MainScreen() {
             })
     }
 }
-
-
-

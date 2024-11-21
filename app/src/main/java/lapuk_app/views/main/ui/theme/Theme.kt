@@ -5,30 +5,37 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-val br1 = Color(0xFFEDE0D4)
-val br2 = Color(0xFFE6CCB2)
-val br3 = Color(0xFFDDB892)
-val br4 = Color(0xFFB08968)
-val br5 = Color(0xFF7F5539)
-val br6 = Color(0xFF9C6644)
+// Define custom colors for the theme
+val br1 = Color(0xFFEDE0D4) // Background color
+val br2 = Color(0xFFE6CCB2) // Surface color
+val br3 = Color(0xFFDDB892) // Unused color
+val br4 = Color(0xFFB08968) // Unused color
+val br5 = Color(0xFF7F5539) // Primary and tertiary color
+val br6 = Color(0xFF9C6644) // Secondary color
 
+// Define the color scheme for the light (default) theme
 private val colorScheme = lightColorScheme(
-    primary = br5, // headers, selected items, buttons
+    primary = br5,
     onPrimary = Color.White,
 
-    secondary = br6, // less prominent ui
+    secondary = br6,
     onSecondary = Color.White,
 
-    tertiary = br5, // accents
+    tertiary = br5,
     onTertiary = Color.White,
 
-    background = br1, // bg
+    background = br1,
     onBackground = Color.Black,
 
-    surface = br2, // menu backgrounds
+    surface = br2,
     onSurface = Color.Black,
 )
 
+/**
+ * Composable function to apply the Lapuk theme to the content.
+ *
+ * @param content The composable content to which the theme will be applied.
+ */
 @Composable
 fun LapukTheme(
     content: @Composable () -> Unit
@@ -39,4 +46,3 @@ fun LapukTheme(
         content = content
     )
 }
-

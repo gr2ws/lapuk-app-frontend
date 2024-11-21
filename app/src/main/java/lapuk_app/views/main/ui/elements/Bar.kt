@@ -1,10 +1,12 @@
 package lapuk_app.views.main.ui.elements
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -18,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -26,6 +29,10 @@ import lapuk_app.views.main.ui.theme.LapukTheme
 import lapuk_app.views.main.ui.theme.br1
 import lapuk_app.views.main.ui.theme.br5
 
+/**
+ * Composable function that creates a top bar with a centered logo.
+ * The top bar uses the LapukTheme and has a background color and offset.
+ */
 @Composable
 fun TopBar() {
     LapukTheme {
@@ -37,13 +44,25 @@ fun TopBar() {
                 .background(br5)
                 .offset(y = 12.5.dp)
         ) {
-            ShowLogo(Color.White, false)
+            Image(
+                painter = painterResource(id = R.drawable.logo_w_name),
+                contentDescription = "logo",
+                colorFilter = ColorFilter.tint(Color.White),
+                modifier = Modifier.size(40.dp)
+            )
         }
     }
 }
 
+/**
+ * Composable function that creates a bottom navigation bar.
+ * The bottom bar contains multiple navigation items, each with an icon and label.
+ * When an item is clicked, it navigates to the corresponding screen.
+ *
+ * @param navController The NavController used for navigation.
+ */
 @Composable
-fun BottomBar( navController: NavController) {
+fun BottomBar(navController: NavController) {
     val selectedItemState = remember { mutableIntStateOf(1) }
     var selectedItem by remember { selectedItemState }
 
