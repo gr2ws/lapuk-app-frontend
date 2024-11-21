@@ -2,6 +2,7 @@ package lapuk_app.views.main.ui.pages
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -153,7 +154,13 @@ fun openGmail(context: Context) {
         putExtra(Intent.EXTRA_SUBJECT, "Comment/Suggestion/Complaint")
         putExtra(Intent.EXTRA_TEXT, "Dear LAPUK Team:\n\n [Insert your message here]")
         type = "message/rfc822"
+        setPackage("com.google.android.gm")
     }
-    // Launch Gmail or show a chooser for available email clients
-    context.startActivity(Intent.createChooser(intent, "Choose an Email client:"))
+    try {
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        Toast.makeText(context,
+            "The Gmail app is not installed on this phone. " +
+                    "Please install and try again.", Toast.LENGTH_LONG).show()
+    }
 }
