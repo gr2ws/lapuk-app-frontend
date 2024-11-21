@@ -21,6 +21,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import lapuk_app.views.main.ui.elements.BottomBar
 import lapuk_app.views.main.ui.elements.TopBar
+import lapuk_app.views.main.ui.pages.AboutUsPage
+import lapuk_app.views.main.ui.pages.ContactUsPage
 import lapuk_app.views.main.ui.pages.PrivacyPolicyPage
 import lapuk_app.views.main.ui.pages.SegregatePage
 import lapuk_app.views.main.ui.pages.TakeImagePage
@@ -96,6 +98,12 @@ class MainActivity : ComponentActivity() {
                             composable("info/privacy-policy") {
                                 PrivacyPolicyPage()
                             }
+                        }
+                        composable("info/contact-us") {
+                            ContactUsPage()
+                        }
+                        composable("info/about-us") {
+                            AboutUsPage()
                         }
                     }
                 },
