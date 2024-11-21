@@ -27,9 +27,8 @@ private val colorScheme = lightColorScheme(
     background = br1,
     onBackground = Color.Black,
 
-    surface = br2, // menu backgrounds
-    onSurface = Color.Black
-
+    surface = br2,
+    onSurface = Color.Black,
 )
 
 /**
