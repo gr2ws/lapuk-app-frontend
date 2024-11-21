@@ -11,7 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -26,90 +25,87 @@ import lapuk_app.views.main.ui.pages.PrivacyPolicyPage
 import lapuk_app.views.main.ui.pages.SegregatePage
 import lapuk_app.views.main.ui.pages.TakeImagePage
 import lapuk_app.views.main.ui.theme.LapukTheme
-import lapuk_app.views.main.ui.theme.br1
-import lapuk_app.views.main.ui.theme.br5
 
-@Suppress("DEPRECATION") // suppress deprecation warning for window.statusBarColor
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         Thread.sleep(3000)
-        installSplashScreen().apply { setOnExitAnimationListener { splashScreenView ->
-            // Call remove() when animation is finished to remove splash screen
-            splashScreenView.remove()}
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        installSplashScreen().apply {
+            setOnExitAnimationListener { splashScreenView ->
+                // Call remove() when animation is finished to remove splash screen
+                splashScreenView.remove()
+            }
 
-        enableEdgeToEdge()
-        window.statusBarColor = br5.toArgb()
-        window.navigationBarColor = br1.toArgb()
+            WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        setContent {
-            MainScreen()
+            enableEdgeToEdge()
+
+            setContent {
+                MainScreen()
+            }
+        }
+    }
+
+    @Preview(
+        showBackground = true, device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
+    )
+    @Composable
+    fun MainScreen() {
+        val navController = rememberNavController()
+
+        LapukTheme {
+            Scaffold(modifier = Modifier.fillMaxSize(),
+
+                topBar = {
+                    TopBar()
+                },
+
+                content = { innerPadding ->
+                    Box(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .shadow(2.dp)
+                            .zIndex(1f)
+                            .fillMaxSize()
+                    ) {
+                        NavHost(
+                            navController = navController,
+                            startDestination = "segregate/take-image",
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            composable("home") {
+                                TODO()
+                            }
+                            composable("segregate") {
+                                SegregatePage(navController)
+                            }
+                            composable("segregate/take-image") {
+                                TakeImagePage(navController)
+                            }
+                            composable("articles") {
+                                TODO()
+                            }
+                            composable("heatmap") {
+                                TODO()
+                            }
+                            composable("info") {
+                                TODO()
+                            }
+                            composable("info/privacy-policy") {
+                                PrivacyPolicyPage()
+                            }
+                        }
+                    }
+                },
+
+                bottomBar = {
+                    BottomBar(navController)
+                })
         }
     }
 }
-
-@Preview(
-    showBackground = true, device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
-)
-@Composable
-fun MainScreen() {
-    val navController = rememberNavController()
-
-    LapukTheme {
-        Scaffold(modifier = Modifier.fillMaxSize(),
-
-            topBar = {
-                TopBar()
-            },
-
-            content = { innerPadding ->
-                Box(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .shadow(2.dp)
-                        .zIndex(1f)
-                        .fillMaxSize()
-                ) {
-                    NavHost(
-                        navController = navController,
-                        startDestination = "segregate/take-image",
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        composable("home") {
-                            TODO()
-                        }
-                        composable("segregate") {
-                            SegregatePage(navController)
-                        }
-                        composable("segregate/take-image") {
-                            TakeImagePage(navController)
-                        }
-                        composable("segregate/take-image/prompt") {
-                            TODO()
-                        }
-                        composable("articles") {
-                            TODO()
-                        }
-                        composable("heatmap") {
-                            TODO()
-                        }
-                        composable("info") {
-                            TODO()
-                        }
-                        composable("info/privacy-policy") {
-                            PrivacyPolicyPage()
-                        }
-                    }
-                }
-            },
-
-            bottomBar = {
-                BottomBar(navController)
-            })
-    }
-}}
 
 
 
