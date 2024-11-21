@@ -123,7 +123,7 @@ fun TakeImagePage(navController: NavHostController) {
         ) {
             IconButton( // capture image button
                 modifier = Modifier
-                    .size(90.dp)
+                    .size(80.dp)
                     .border(4.5.dp, br5, shape = RoundedCornerShape(20.dp))
                     .background(br3, shape = RoundedCornerShape(20.dp))
                     .align(alignment = Alignment.Center), onClick = { TODO("capture image") }) {
@@ -137,7 +137,7 @@ fun TakeImagePage(navController: NavHostController) {
 
             IconButton( // upload image button
                 modifier = Modifier
-                    .size(75.dp)
+                    .size(70.dp)
                     .border(4.dp, br5, shape = RoundedCornerShape(20.dp))
                     .background(br3, shape = RoundedCornerShape(20.dp)).align(Alignment.CenterEnd),
                 onClick = { TODO("upload image from gallery") }) {
