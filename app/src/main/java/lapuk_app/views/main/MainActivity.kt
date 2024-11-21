@@ -72,7 +72,7 @@ fun MainScreen() {
                         //startDestination = "segregate",
                         //startDestination = "info/privacy-policy",
                         //startDestination = "info/contact-us",
-                        startDestination = "info/about-us", //
+                        startDestination = "info/about-us",
                         modifier = Modifier.fillMaxSize()
                     ) {
                         composable("home") {

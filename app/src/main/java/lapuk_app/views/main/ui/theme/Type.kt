@@ -8,6 +8,20 @@ import androidx.compose.ui.unit.sp
 
 val Typography = Typography(
 
+    /*       SUMMARY OF SPACINGS        */
+    //======= (all units in .sp) =======//
+    /* Body (L) --> 16, double          */
+    /* Body (M) --> 14, x1.8            */
+    /* Body (S) --> 12, x1.8            */
+    //=====    =====     =====     =====//
+    /* Title (L) = 60, 28sp LH (bold)   */
+    /* Title (M) = 48, 28sp LH (bold)   */
+    /* Title (S) = 36, 1.5x (bold)      */
+    //=====    =====     =====     =====//
+    /* Label (L) --> 24 (bold)          */
+    /* Label (M) --> 20 (bold)          */ // [currently unusable; breaks bottom navbar]
+    /* Label (S) --> 16 (bold)          */
+
     bodyLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
@@ -20,7 +34,7 @@ val Typography = Typography(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        lineHeight = 14.sp * 1.8,
+        lineHeight = 14.sp * 1.4,
         letterSpacing = 0.3.sp
     ),
 
@@ -60,6 +74,20 @@ val Typography = Typography(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
+        letterSpacing = 0.sp
+    ),
+
+//    labelMedium = TextStyle(
+//        fontFamily = FontFamily.SansSerif,
+//        fontWeight = FontWeight.Bold,
+//        fontSize = 20.sp,
+//        letterSpacing = 0.sp
+//    ),
+
+    labelSmall = TextStyle(
+        fontFamily = FontFamily.SansSerif,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
         letterSpacing = 0.sp
     )
 )
