@@ -21,7 +21,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import lapuk_app.views.main.ui.elements.BottomBar
 import lapuk_app.views.main.ui.elements.TopBar
-import lapuk_app.views.main.ui.pages.AboutUsPage
 import lapuk_app.views.main.ui.pages.ContactUsPage
 import lapuk_app.views.main.ui.pages.PrivacyPolicyPage
 import lapuk_app.views.main.ui.pages.SegregatePage
@@ -49,69 +48,55 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
 
-    @Preview(
-        showBackground = true, device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
-    )
-    @Composable
-    fun MainScreen() {
-        val navController = rememberNavController()
+@Preview(
+    showBackground = true, device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
+)
+@Composable
+fun MainScreen() {
+    val navController = rememberNavController()
 
-        LapukTheme {
-            Scaffold(modifier = Modifier.fillMaxSize(),
+    LapukTheme {
+        Scaffold(modifier = Modifier.fillMaxSize(),
 
-                topBar = {
-                    TopBar()
-                },
+            topBar = {
+                TopBar()
+            },
 
-                content = { innerPadding ->
-                    Box(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .shadow(2.dp)
-                            .zIndex(1f)
-                            .fillMaxSize()
+            content = { innerPadding ->
+                Box(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .shadow(2.dp)
+                        .zIndex(1f)
+                        .fillMaxSize()
+                ) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = "segregate/take-image",
+                        modifier = Modifier.fillMaxSize()
                     ) {
-                        NavHost(
-                            navController = navController,
-                            startDestination = "segregate/take-image",
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            composable("home") {
-                                TODO()
-                            }
-                            composable("segregate") {
-                                SegregatePage(navController)
-                            }
-                            composable("segregate/take-image") {
-                                TakeImagePage(navController)
-                            }
-                            composable("articles") {
-                                TODO()
-                            }
-                            composable("heatmap") {
-                                TODO()
-                            }
-                            composable("info") {
-                                TODO()
-                            }
-                            composable("info/privacy-policy") {
-                                PrivacyPolicyPage()
-                            }
-                        }
-                        composable("info/contact-us") {
-                            ContactUsPage()
-                        }
-                        composable("info/about-us") {
-                            AboutUsPage()
-                        }
-                    }
-                },
+                        composable("home") { TODO() }
 
-                bottomBar = {
-                    BottomBar(navController)
-                })
-        }
+                        composable("segregate") { SegregatePage(navController) }
+                        composable("segregate/take-image") { TakeImagePage(navController) }
+
+                        composable("articles") { TODO() }
+
+                        composable("heatmap") { TODO() }
+
+                        composable("info") { TODO() }
+                        composable("info/privacy-policy") { PrivacyPolicyPage() }
+                        composable("info/contact-us") { ContactUsPage() }
+                        composable("info/about-us") { TODO()}
+                    }
+                }
+            },
+
+            bottomBar = {
+                BottomBar(navController)
+            })
     }
 }
 
