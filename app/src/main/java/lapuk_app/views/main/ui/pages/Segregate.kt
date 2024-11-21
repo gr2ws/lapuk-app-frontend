@@ -30,9 +30,6 @@ import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br4
 import lapuk_app.views.main.ui.theme.br5
 
-// * TODO: show column of list of content
-// * TODO: fill in placeholder icons
-// TODO: open camera
 // TODO: take picture
 // TODO: store image to local storage, format title (DATE_TIME) (Ask if sure)
 // TODO: take list of stored images
