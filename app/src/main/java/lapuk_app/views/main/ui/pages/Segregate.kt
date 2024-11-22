@@ -24,33 +24,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.lapuk_app.R
 import lapuk_app.views.main.ui.theme.br3
+import lapuk_app.views.main.ui.theme.br4
 import lapuk_app.views.main.ui.theme.br5
 
-// * TODO: show column of list of content
-// TODO: fill in placeholder icons
-// TODO: open camera
-// TODO: take picture
-// TODO: store image to local storage, format title (DATE_TIME) (Ask if sure)
-// TODO: take list of stored images
-// TODO: show list of stored images, with previews
-// TODO: delete images (ask if sure)
+// * TODO: make image capture work
+// * TODO: callback function for image to main scaffold to pass to preview/prompt
+// TODO: save to local storage after previewing and prompting
+// TODO: read from local storage, count, and show as list with previews
 
 // TODO: make backend to classify/detect image
 // TODO: send image (ask if sure) (show error if no internet, no server)
 // TODO: receive and show
 
 @Composable
-fun SegregatePage() {
+fun SegregatePage(navController: NavController) {
+    val itemCount = 0
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
-            items(10) { index ->
+            items(itemCount) { index ->
                 ColumnItem(index)
             }
             item {
                 Row {
-                    Spacer(
+                    if (itemCount <= 0) Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp)
+                    ) {
+                        Text(
+                            text = "No images added yet...",
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                    else Spacer(
                         modifier = Modifier
                             .height(80.dp)
                             .fillMaxWidth()
@@ -63,17 +72,21 @@ fun SegregatePage() {
                 .align(Alignment.BottomEnd)
                 .padding(5.dp)
         ) {
-            IconButton(
-                modifier = Modifier
-                    .size(70.dp)
-                    .border(3.dp, br5, shape = RoundedCornerShape(20.dp))
-                    .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
-                    .background(br3, shape = RoundedCornerShape(20.dp)),
-                onClick = { TODO("Open Camera") }
-            ) {
+            IconButton(modifier = Modifier
+                .size(70.dp)
+                .border(4.dp, br5, shape = RoundedCornerShape(20.dp))
+                .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
+                .background(br3, shape = RoundedCornerShape(20.dp)), onClick = {
+                navController.navigate("segregate/take-image") {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }) {
                 Icon(
-                    modifier = Modifier
-                        .fillMaxSize(.85f),
+                    modifier = Modifier.fillMaxSize(.85f),
                     painter = painterResource(id = R.drawable.add),
                     contentDescription = "add image",
                     tint = br5
@@ -114,12 +127,11 @@ fun ColumnItem(index: Int) {
                 IconButton(modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .height(90.dp)
-                    .width(70.dp),
-                    onClick = { TODO("Delete image") }) {
+                    .width(70.dp), onClick = { TODO("Delete image") }) {
                     Icon(
                         painter = painterResource(id = R.drawable.delete),
                         contentDescription = "delete image",
-                        tint = br5
+                        tint = br4
                     )
                 }
             }
