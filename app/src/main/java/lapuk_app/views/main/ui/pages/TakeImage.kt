@@ -1,13 +1,8 @@
 package lapuk_app.views.main.ui.pages
 
-import android.Manifest
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageProxy
-import androidx.camera.core.Preview
-import androidx.camera.view.PreviewView
+import androidx.camera.view.CameraController
+import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -35,15 +30,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.zIndex
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import com.example.lapuk_app.R
-import lapuk_app.views.main.getCameraProvider
+import lapuk_app.views.main.CameraFunction
 import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br5
-import java.util.concurrent.Executors
 
 /**
  * Composable function that displays the Take Image Page.
@@ -52,56 +43,29 @@ import java.util.concurrent.Executors
  * @param navController The NavHostController used for navigation.
  */
 @Composable
-fun TakeImagePage(navController: NavHostController) {
-    val context = LocalContext.current
-
+fun TakeImagePage(navController: NavHostController, onImageCaptured: (ImageProxy) -> Unit) {
     var hasCameraPermission by remember { mutableStateOf(false) }
-
-    val previewView = remember {
-        PreviewView(context)
-    }
-
-    var capturedImage: ImageProxy? = null
-
-    // Launcher to request camera permission
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        hasCameraPermission = isGranted
+    val context = LocalContext.current
+    val controller = remember {
+        LifecycleCameraController(context).apply {
+            setEnabledUseCases(CameraController.IMAGE_CAPTURE)
+        }
     }
 
     // Request camera permission when the composable is first composed
     LaunchedEffect(key1 = Unit) {
-        launcher.launch(Manifest.permission.CAMERA)
-
-//        if (!hasCameraPermission) {
-//            Toast.makeText(
-//                context, "Permissions were not granted!", Toast.LENGTH_LONG
-//            ).show()
-//        }
+        if (CameraFunction().hasPermission(context)) {
+            hasCameraPermission = true
+        } else {
+            CameraFunction().getPermission(context)
+        }
     }
 
-    // Display camera preview if permission is granted, otherwise show a black screen
+    // Display camera preview if camera permission is granted
     if (hasCameraPermission) {
-        val lensFacing = CameraSelector.LENS_FACING_BACK
-        val lifecycleOwner = LocalLifecycleOwner.current
-        val preview = Preview.Builder().build()
-
-        val cameraxSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
-
-        LaunchedEffect(lensFacing) {
-            val cameraProvider = context.getCameraProvider()
-            cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(lifecycleOwner, cameraxSelector, preview)
-            preview.surfaceProvider = previewView.surfaceProvider
-        }
-
-        AndroidView(
-            factory = { previewView }, modifier = Modifier
-                .fillMaxSize()
-                .zIndex(-1f)
+        CameraFunction().ShowCameraView(
+            controller = controller, modifier = Modifier.fillMaxSize()
         )
-
     } else {
         Box(
             modifier = Modifier
@@ -177,25 +141,8 @@ fun TakeImagePage(navController: NavHostController) {
                 .border(4.5.dp, br5, shape = RoundedCornerShape(20.dp))
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
                 .background(br3, shape = RoundedCornerShape(20.dp))
-                .align(alignment = Alignment.Center), onClick = {
-
-                val imageCapture = ImageCapture.Builder().build()
-                val cameraExecutor = Executors.newSingleThreadExecutor()
-
-                imageCapture.takePicture(cameraExecutor,
-                    object : ImageCapture.OnImageCapturedCallback() {
-                        override fun onCaptureSuccess(image: ImageProxy) {
-                            capturedImage = image
-                        }
-
-//                        override fun onError(exception: ImageCaptureException) {
-//                            Toast.makeText(
-//                                context, "Unable to capture image!", Toast.LENGTH_SHORT
-//                            ).show()
-//                        }
-                    })
-
-            }) {
+                .align(alignment = Alignment.Center),
+                onClick = { TODO("Re-add and make work image capture") }) {
                 Icon(
                     modifier = Modifier.fillMaxSize(.63f),
                     painter = painterResource(id = R.drawable.camera),

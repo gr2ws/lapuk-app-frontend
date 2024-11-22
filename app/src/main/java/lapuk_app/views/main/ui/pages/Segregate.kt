@@ -30,11 +30,10 @@ import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br4
 import lapuk_app.views.main.ui.theme.br5
 
-// TODO: take picture
-// TODO: store image to local storage, format title (DATE_TIME) (Ask if sure)
-// TODO: take list of stored images
-// TODO: show list of stored images, with previews
-// TODO: delete images (ask if sure)
+// TODO: make image capture work
+// TODO: callback function for image to main scaffold to pass to preview/prompt
+// TODO: save to local storage after previewing and prompting
+// TODO: read from local storage, count, and show as list with previews
 
 // TODO: make backend to classify/detect image
 // TODO: send image (ask if sure) (show error if no internet, no server)
