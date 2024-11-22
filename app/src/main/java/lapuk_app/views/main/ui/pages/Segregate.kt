@@ -30,8 +30,8 @@ import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br4
 import lapuk_app.views.main.ui.theme.br5
 
-// TODO: make image capture work
-// TODO: callback function for image to main scaffold to pass to preview/prompt
+// * TODO: make image capture work
+// * TODO: callback function for image to main scaffold to pass to preview/prompt
 // TODO: save to local storage after previewing and prompting
 // TODO: read from local storage, count, and show as list with previews
 

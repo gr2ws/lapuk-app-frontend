@@ -9,11 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -26,7 +23,6 @@ import lapuk_app.views.main.ui.elements.BottomBar
 import lapuk_app.views.main.ui.elements.TopBar
 import lapuk_app.views.main.ui.pages.ContactUsPage
 import lapuk_app.views.main.ui.pages.PrivacyPolicyPage
-import lapuk_app.views.main.ui.pages.SavePreviewPage
 import lapuk_app.views.main.ui.pages.SegregatePage
 import lapuk_app.views.main.ui.pages.TakeImagePage
 import lapuk_app.views.main.ui.theme.LapukTheme
@@ -61,8 +57,6 @@ class MainActivity : ComponentActivity() {
 fun MainScreen() {
     val navController = rememberNavController()
 
-    val currentImage = remember { mutableStateOf<ImageBitmap?>(null) }
-
     LapukTheme {
         Scaffold(modifier = Modifier.fillMaxSize(),
 
@@ -86,15 +80,7 @@ fun MainScreen() {
                         composable("home") { TODO() }
 
                         composable("segregate") { SegregatePage(navController) }
-                        composable("segregate/take-image") {
-                            // pass empty currentImage, get image and store, return currentImage to main screen
-                            TakeImagePage(navController, onImageCaptured = { imageBitmap : ImageBitmap ->
-                                currentImage.value = imageBitmap
-                            })
-                        }
-                        composable("segregate/save-preview") {
-                            currentImage.value?.let { SavePreviewPage(it) }
-                        }
+                        composable("segregate/take-image") { TakeImagePage(navController) }
 
                         composable("articles") { TODO() }
 

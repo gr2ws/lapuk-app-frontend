@@ -44,9 +44,13 @@ import lapuk_app.views.main.ui.theme.br5
  * @param navController The NavHostController used for navigation.
  */
 @Composable
-fun TakeImagePage(navController: NavHostController, onImageCaptured: (ImageBitmap) -> Unit) {
+fun TakeImagePage(navController: NavHostController) {
     var hasCameraPermission by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+    val currentImage = remember { mutableStateOf<ImageBitmap?>(null) }
+
     val context = LocalContext.current
+
     val controller = remember {
         LifecycleCameraController(context).apply {
             setEnabledUseCases(CameraController.IMAGE_CAPTURE)
@@ -81,7 +85,7 @@ fun TakeImagePage(navController: NavHostController, onImageCaptured: (ImageBitma
         Row(
             modifier = Modifier
                 .weight(.35f)
-                .background(Color.Black.copy(alpha = 0.70f))
+                .background(Color.Black.copy(alpha = 0.65f))
                 .padding(horizontal = 15.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -147,14 +151,8 @@ fun TakeImagePage(navController: NavHostController, onImageCaptured: (ImageBitma
                 .align(alignment = Alignment.Center),
                 onClick = {
                     CameraFunction().takePhoto(controller, context) { image ->
-                        onImageCaptured(image)
-                        navController.navigate("segregate/save-preview") {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                        currentImage.value = image
+                        showDialog = true
                     }
                 }) {
                 Icon(
@@ -167,7 +165,7 @@ fun TakeImagePage(navController: NavHostController, onImageCaptured: (ImageBitma
 
             // Upload image button
             IconButton(modifier = Modifier
-                .size(70.dp)
+                .size(65.dp)
                 .border(4.dp, br5, shape = RoundedCornerShape(20.dp))
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
                 .background(br3, shape = RoundedCornerShape(20.dp))
@@ -179,6 +177,12 @@ fun TakeImagePage(navController: NavHostController, onImageCaptured: (ImageBitma
                     contentDescription = "upload image from gallery",
                     tint = br5
                 )
+            }
+
+            if (showDialog && currentImage.value != null) {
+                SavePreviewDialog(imageBitmap = currentImage.value!!, onDismiss = {
+                    showDialog = it
+                })
             }
         }
     }
