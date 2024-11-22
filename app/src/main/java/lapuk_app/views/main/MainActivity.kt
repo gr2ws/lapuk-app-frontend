@@ -22,6 +22,7 @@ import lapuk_app.views.main.ui.elements.BottomBar
 import lapuk_app.views.main.ui.elements.TopBar
 import lapuk_app.views.main.ui.pages.AboutUsPage
 import lapuk_app.views.main.ui.pages.ContactUsPage
+import lapuk_app.views.main.ui.pages.DefaultPreview
 import lapuk_app.views.main.ui.pages.PrivacyPolicyPage
 import lapuk_app.views.main.ui.pages.SegregatePage
 import lapuk_app.views.main.ui.theme.LapukTheme

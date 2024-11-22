@@ -10,6 +10,9 @@ activityCompose = "1.9.3"
 composeBom = "2024.11.00"
 coreSplashscreen = "1.0.1"
 navigationCompose = "2.8.4"
+accompanist_pager = "0.29.0-alpha"
+accompanist_pager_indicators = "0.29.0-alpha"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -28,6 +31,9 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist_pager" }
+accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist_pager_indicators" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
