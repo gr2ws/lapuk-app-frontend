@@ -71,7 +71,7 @@ fun TakeImagePage(navController: NavHostController) {
         CameraFunction().ShowCameraView(
             controller = controller, modifier = Modifier
                 .zIndex(-2f)
-            // constrain width to max screen width
+                .fillMaxSize()
         )
     } else {
         Box(

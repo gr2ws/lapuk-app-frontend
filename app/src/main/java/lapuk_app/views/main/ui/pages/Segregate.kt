@@ -96,7 +96,7 @@ fun SegregatePage(navController: NavController) {
     }
 }
 
-@Composable
+@Composable // TODO: refactor to card
 fun ColumnItem(index: Int) {
     Box(
         modifier = Modifier

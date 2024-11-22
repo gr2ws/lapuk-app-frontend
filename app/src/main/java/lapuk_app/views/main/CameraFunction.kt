@@ -64,6 +64,7 @@ class CameraFunction {
                 PreviewView(it).apply {
                     this.controller = controller
                     controller.bindToLifecycle(lifecycleOwner)
+                    this.scaleType = PreviewView.ScaleType.FILL_CENTER
                 }
             }, modifier = modifier
         )
@@ -86,22 +87,17 @@ class CameraFunction {
                         postRotate(image.imageInfo.rotationDegrees.toFloat())
                     }
 
-                    val originalBitmap = image.toBitmap()
-                    val dimension = minOf(originalBitmap.width, originalBitmap.height)
-                    val xOffset = (originalBitmap.width - dimension) / 2
-                    val yOffset = (originalBitmap.height - dimension) / 2
-
-                    val croppedBitmap = Bitmap.createBitmap(
-                        originalBitmap,
-                        xOffset,
-                        yOffset,
-                        dimension,
-                        dimension,
+                    val formattedBitmap = Bitmap.createBitmap(
+                        image.toBitmap(),
+                        0,
+                        0,
+                        image.width,
+                        image.height,
                         matrix,
                         true
                     )
 
-                    onPhotoTaken(croppedBitmap.asImageBitmap())
+                    onPhotoTaken(formattedBitmap.asImageBitmap())
                 }
 
                 override fun onError(exception: ImageCaptureException) {
