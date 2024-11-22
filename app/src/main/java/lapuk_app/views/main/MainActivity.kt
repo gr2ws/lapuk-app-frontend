@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
+}   
 
 @Preview(
     showBackground = true, device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
