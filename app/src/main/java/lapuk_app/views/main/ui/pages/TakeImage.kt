@@ -1,6 +1,5 @@
 package lapuk_app.views.main.ui.pages
 
-import androidx.camera.core.ImageProxy
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.background
@@ -27,9 +26,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.example.lapuk_app.R
 import lapuk_app.views.main.CameraFunction
@@ -43,7 +44,7 @@ import lapuk_app.views.main.ui.theme.br5
  * @param navController The NavHostController used for navigation.
  */
 @Composable
-fun TakeImagePage(navController: NavHostController, onImageCaptured: (ImageProxy) -> Unit) {
+fun TakeImagePage(navController: NavHostController, onImageCaptured: (ImageBitmap) -> Unit) {
     var hasCameraPermission by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val controller = remember {
@@ -54,17 +55,19 @@ fun TakeImagePage(navController: NavHostController, onImageCaptured: (ImageProxy
 
     // Request camera permission when the composable is first composed
     LaunchedEffect(key1 = Unit) {
-        if (CameraFunction().hasPermission(context)) {
-            hasCameraPermission = true
-        } else {
+        if (CameraFunction().hasPermission(context)) hasCameraPermission = true
+         else { // if permission not granted, ask permission and check again
             CameraFunction().getPermission(context)
+            if(CameraFunction().hasPermission(context)) hasCameraPermission = true
         }
     }
 
     // Display camera preview if camera permission is granted
     if (hasCameraPermission) {
         CameraFunction().ShowCameraView(
-            controller = controller, modifier = Modifier.fillMaxSize()
+            controller = controller, modifier = Modifier
+                .zIndex(-2f)
+            // constrain width to max screen width
         )
     } else {
         Box(
@@ -142,7 +145,18 @@ fun TakeImagePage(navController: NavHostController, onImageCaptured: (ImageProxy
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
                 .background(br3, shape = RoundedCornerShape(20.dp))
                 .align(alignment = Alignment.Center),
-                onClick = { TODO("Re-add and make work image capture") }) {
+                onClick = {
+                    CameraFunction().takePhoto(controller, context) { image ->
+                        onImageCaptured(image)
+                        navController.navigate("segregate/save-preview") {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                }) {
                 Icon(
                     modifier = Modifier.fillMaxSize(.63f),
                     painter = painterResource(id = R.drawable.camera),

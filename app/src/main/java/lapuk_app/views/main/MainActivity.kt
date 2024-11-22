@@ -1,11 +1,9 @@
 package lapuk_app.views.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.camera.core.ImageProxy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -37,7 +36,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Thread.sleep(3000)
+        Thread.sleep(2000)
         installSplashScreen().apply {
             setOnExitAnimationListener { splashScreenView ->
                 // Call remove() when animation is finished to remove splash screen
@@ -62,7 +61,7 @@ class MainActivity : ComponentActivity() {
 fun MainScreen() {
     val navController = rememberNavController()
 
-    var currentImage = remember { mutableStateOf<ImageProxy?>(null) }
+    val currentImage = remember { mutableStateOf<ImageBitmap?>(null) }
 
     LapukTheme {
         Scaffold(modifier = Modifier.fillMaxSize(),
@@ -89,13 +88,11 @@ fun MainScreen() {
                         composable("segregate") { SegregatePage(navController) }
                         composable("segregate/take-image") {
                             // pass empty currentImage, get image and store, return currentImage to main screen
-                            TakeImagePage(navController, onImageCaptured = { imageProxy ->
-                                currentImage.value = imageProxy
-                            }) // TODO: make sure not null (callback probably works, image capture fails)
+                            TakeImagePage(navController, onImageCaptured = { imageBitmap : ImageBitmap ->
+                                currentImage.value = imageBitmap
+                            })
                         }
                         composable("segregate/save-preview") {
-                            // TODO: make sure not null
-                            Log.d("MainScreen", "currentImage: ${currentImage.value} from save-preview")
                             currentImage.value?.let { SavePreviewPage(it) }
                         }
 
