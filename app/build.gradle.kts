@@ -50,6 +50,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.accompanist.pager)
+    implementation(libs.accompanist.pager.indicators)
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
