@@ -13,23 +13,30 @@ val br5 = Color(0xFF7F5539) //7F5539
 val br6 = Color(0xFF9C6644) //9C6644
 val wh1 = Color(0xFFF5F5F5) //F5F5F5
 
-internal val colorScheme = lightColorScheme(
-    primary = br5, // headers, selected items, buttons
+// Define the color scheme for the light (default) theme
+private val colorScheme = lightColorScheme(
+    primary = br5,
     onPrimary = Color.White,
 
-    secondary = br6, // less prominent ui
+    secondary = br6,
     onSecondary = Color.White,
 
-    tertiary = br5, // accents
+    tertiary = br5,
     onTertiary = Color.White,
 
-    background = br1, // bg
+    background = br1,
     onBackground = Color.Black,
 
     surface = br2, // menu backgrounds
     onSurface = Color.Black
+
 )
 
+/**
+ * Composable function to apply the Lapuk theme to the content.
+ *
+ * @param content The composable content to which the theme will be applied.
+ */
 @Composable
 fun LapukTheme(
     content: @Composable () -> Unit
@@ -40,4 +47,3 @@ fun LapukTheme(
         content = content
     )
 }
-

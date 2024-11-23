@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.LapukApp" parent="android:Theme.Material.Light.NoActionBar" >
+        <item name="android:statusBarColor">@color/brown</item>
+    </style>
 
-    <style name="Theme.LapukApp" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.LapukApp.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/brown</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/icon</item>
+        <item name="postSplashScreenTheme">@style/Theme.LapukApp</item>
+        <item name="android:statusBarColor">@color/brown</item>
+    </style>
 </resources>
