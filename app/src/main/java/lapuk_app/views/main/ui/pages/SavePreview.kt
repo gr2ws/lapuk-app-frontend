@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import kotlinx.coroutines.withTimeout
+import lapuk_app.views.main.checkConnection
 import lapuk_app.views.main.decodeToBitmap
 import lapuk_app.views.main.encodeBitmap
 import lapuk_app.views.main.requestAnalysis
@@ -51,38 +52,40 @@ fun SavePreviewDialog(
     imageBitmap: Bitmap, onDismiss: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
-
     val loadingLatch = CountDownLatch(1)
-
     val imageResult = remember { mutableStateOf<Bitmap?>(imageBitmap) }
-
     val isLoading = remember { mutableStateOf(true) }
-
-    if (isLoading.value) LoadingDialog(onDismiss = {
-        loadingLatch.countDown() // Cancel the image analysis
-        onDismiss(false)
-    })
 
     LaunchedEffect(Unit) {
         try {
             withTimeout(60000) { // throws error if not finished in 1 minute
-                requestAnalysis(encodedString = encodeBitmap(imageBitmap), callback = { result ->
-                    imageResult.value = decodeToBitmap(result)
-                    isLoading.value = false
-
-                })
+                if (!checkConnection()) throw Exception("Unable to reach server.")
+                else {
+                    requestAnalysis(encodedString = encodeBitmap(imageBitmap),
+                        callback = { result ->
+                            imageResult.value = decodeToBitmap(result)
+                            isLoading.value = false
+                        })
+                }
             }
         } catch (e: Exception) { // show error message, if any. reset imageResult to original image
             Toast.makeText(
-                context, "Image Analysis Error!: ${e.message}", Toast.LENGTH_SHORT
+                context, "Image Analysis Error: ${e.message}", Toast.LENGTH_SHORT
             ).show()
             isLoading.value = false
-
             imageResult.value = imageBitmap
         }
     }
 
-    if (!isLoading.value) Dialog(onDismissRequest = { onDismiss(false) }) {
+    if (isLoading.value) LoadingDialog(onDismiss = {
+        loadingLatch.countDown() // Cancel the image analysis
+        onDismiss(false)
+        Toast.makeText(
+            context, "Image Analysis Cancelled.", Toast.LENGTH_SHORT
+        ).show()
+    })
+
+    Dialog(onDismissRequest = { onDismiss(false) }) {
         Card(
             modifier = Modifier
                 .fillMaxHeight(.73f)

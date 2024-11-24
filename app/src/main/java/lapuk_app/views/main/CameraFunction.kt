@@ -88,8 +88,7 @@ fun ShowCameraView(
 fun takePhoto(
     controller: LifecycleCameraController, context: Context, onPhotoTaken: (Bitmap) -> Unit
 ) {
-    controller.takePicture(
-        ContextCompat.getMainExecutor(context),
+    controller.takePicture(ContextCompat.getMainExecutor(context),
         object : ImageCapture.OnImageCapturedCallback() {
             override fun onCaptureSuccess(image: ImageProxy) {
                 val matrix = Matrix().apply {
@@ -121,8 +120,6 @@ fun requestAnalysis(encodedString: String, callback: (String) -> Unit) {
     val request = Request.Builder().url("http://10.8.130.186:5000/detect").post(
         encodedString.toRequestBody("text/plain".toMediaTypeOrNull())
     ).build()
-
-    Log.d("Request", "Sending request to analyze image.")
 
     OkHttpClient().newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
@@ -173,3 +170,27 @@ fun decodeToBitmap(encodedString: String): Bitmap {
     return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
 }
 
+/**
+ * Tests connectivity to the server by requesting to the root endpoint and checking the response.
+ *
+ * @return True if the connection is successful, false otherwise.
+ */
+fun checkConnection(): Boolean {
+    val request = Request.Builder().url("http://10.8.130.186:5000/").build()
+
+    var connection = false
+
+    OkHttpClient().newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            Log.e("ConnectivityTest", "Request failed: $e")
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            if (response.isSuccessful) {
+                connection = true
+            }
+        }
+    })
+
+    return connection
+}
