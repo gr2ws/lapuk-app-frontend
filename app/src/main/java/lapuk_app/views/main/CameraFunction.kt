@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.util.Base64.DEFAULT
 import android.util.Log
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -87,7 +88,8 @@ fun ShowCameraView(
 fun takePhoto(
     controller: LifecycleCameraController, context: Context, onPhotoTaken: (Bitmap) -> Unit
 ) {
-    controller.takePicture(ContextCompat.getMainExecutor(context),
+    controller.takePicture(
+        ContextCompat.getMainExecutor(context),
         object : ImageCapture.OnImageCapturedCallback() {
             override fun onCaptureSuccess(image: ImageProxy) {
                 val matrix = Matrix().apply {
@@ -99,6 +101,8 @@ fun takePhoto(
                 )
 
                 onPhotoTaken(formattedBitmap)
+
+                image.close()
             }
 
             override fun onError(exception: ImageCaptureException) {
@@ -107,20 +111,18 @@ fun takePhoto(
         })
 }
 
-
 /**
  * Sends a request to analyze the given Base64 encoded string.
  *
  * @param encodedString The Base64 encoded string to be analyzed.
  * @return The result of the analysis as a string.
  */
-fun requestAnalysis(encodedString: String): String {
+fun requestAnalysis(encodedString: String, callback: (String) -> Unit) {
     val request = Request.Builder().url("http://10.8.130.186:5000/detect").post(
-        encodedString
-            .toRequestBody("text/plain".toMediaTypeOrNull())
+        encodedString.toRequestBody("text/plain".toMediaTypeOrNull())
     ).build()
 
-    var requestResult = ""
+    Log.d("Request", "Sending request to analyze image.")
 
     OkHttpClient().newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
@@ -129,14 +131,20 @@ fun requestAnalysis(encodedString: String): String {
 
         override fun onResponse(call: Call, response: Response) {
             if (response.isSuccessful) {
-                requestResult = response.body?.string() ?: "Error: No response received."
+                Log.d("Request", "Request successful.")
+
+                Thread.sleep(100) // artificial delay to stop errors in emulator
+
+                val result = response.body?.string() ?: "Error: No response received."
+
+                Log.d("Request", "Result received: $result.")
+
+                callback(result)
             } else {
                 Log.e("Request", "Request failed: ${response.code}")
             }
         }
     })
-
-    return requestResult
 }
 
 /**
@@ -154,13 +162,14 @@ fun encodeBitmap(image: Bitmap): String {
 }
 
 /**
- * Decodes a Base64 encoded string to a Bitmap image.
+ * Decodes a given Base64 encoded string to a Bitmap image.
  *
- * @param encodedImage The Base64 encoded string of the image.
+ * @param encodedString The Base64 encoded string to decode.
  * @return The decoded Bitmap image.
  */
 @OptIn(ExperimentalEncodingApi::class)
-fun decodeBitmap(encodedImage: String): Bitmap {
-    val decodedBytes = Base64.decode(encodedImage)
-    return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+fun decodeToBitmap(encodedString: String): Bitmap {
+    val byteArray = Base64.decode(encodedString, DEFAULT)
+    return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
 }
+
