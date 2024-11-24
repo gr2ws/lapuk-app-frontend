@@ -1,25 +1,34 @@
 package lapuk_app.views.main.ui.pages
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -27,10 +36,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.lapuk_app.R
 import lapuk_app.views.main.ui.theme.Typography
 import lapuk_app.views.main.ui.theme.br2
-import lapuk_app.views.main.ui.theme.br6
 import lapuk_app.views.main.ui.theme.wh1
 
 data class AccordionItem(
@@ -39,13 +48,14 @@ data class AccordionItem(
     var expanded: Boolean
 )
 
-@Preview(showBackground = true,
+@Preview(
+    showBackground = true,
     device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
 )
 
 @Composable
 fun FAQsPage() {
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
@@ -59,7 +69,7 @@ fun FAQsPage() {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                modifier = Modifier.padding(vertical = 20.dp),
+                modifier = Modifier.padding(top = 20.dp, bottom = 8.dp),
                 text = "Frequently Asked Questions",
                 style = Typography.titleSmall,
                 textAlign = TextAlign.Center
@@ -68,7 +78,7 @@ fun FAQsPage() {
 
         Box(
             modifier = Modifier
-                .padding(vertical = 10.dp)
+                .padding(vertical = 16.dp)
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
@@ -122,9 +132,9 @@ fun AccordionModel() {
         )
     )
 
-    var chevronID: Int
+    var expandedIndex by remember { mutableIntStateOf(-1) } // none expanded
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
@@ -144,82 +154,89 @@ fun AccordionModel() {
                     topLeft = Offset(size.width, 4f),
                     size = Size(1.5.dp.toPx(), size.height - 5)
                 )
+
+                drawRect(
+                    color = Color.Black.copy(alpha = 0.15f),
+                    topLeft = Offset(0f, size.height - 3.dp.toPx()),  // Position at the bottom
+                    size = Size(size.width, 4.5.dp.toPx())  // Shadow height
+                )
             },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start
     ) {
         // Accordion Element
-        accordionItems.forEachIndexed { index, item ->
-            Box(
+        itemsIndexed(accordionItems) { index, item ->
+
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .then(
-                        if (index == accordionItems.lastIndex) {
-                            Modifier.padding(bottom = 4.dp) // Add space for shadow on the last row
-                        } else Modifier
-                    )
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = wh1)
-                        .drawWithContent {
-                            drawContent()
-                            //bottom border
-                            drawRect(
-                                color = Color.Gray,
-                                topLeft = Offset(0f, size.height - 1.dp.toPx()), // Bottom edge
-                                size = Size(size.width, 0.25.dp.toPx()) // Border thickness
-                            )
-                            if (index == accordionItems.lastIndex) {
-                                drawRect(
-                                    color = Color.Black.copy(alpha = 0.25f),
-                                    topLeft = Offset(0f, size.height), // Below the bottom border
-                                    size = Size(size.width, 3.5.dp.toPx()) // Shadow thickness
-                                )
-                            }
-                        },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        style = Typography.bodySmall,
-                        text = item.question,
-                        modifier = Modifier
-                            .weight(0.90f)
-                            .padding(start = 10.dp)
-                    )
-                    chevronID =
-                        if (!item.expanded) R.drawable.chevron_down
-                        else R.drawable.chevron_up
-                    Icon(
-                        painter = painterResource(chevronID),
-                        contentDescription = "description",
-                        modifier = Modifier
-                            .weight(0.1f)
-                            .padding(horizontal = 6.dp)
-                            .clickable {
-                                item.expanded = !item.expanded
-                            }
-                    )
-
-                    // Show answer if expanded
-                    if (item.expanded) {
-                        Text(
-                            text = item.answerExpandable,
-                            style = Typography.bodySmall,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                                .background(color = br2)
-                        )
+                    .background(color = wh1)
+                    .clickable {
+                        expandedIndex =
+                            if (expandedIndex == index) -1 else index // Toggle expand/collapse
                     }
+                    .drawWithContent {
+                        drawContent()
+                        //bottom border
+                        drawRect(
+                            color = Color.Gray,
+                            topLeft = Offset(0f, size.height - 1.dp.toPx()), // Bottom edge
+                            size = Size(size.width, 0.25.dp.toPx()) // Border thickness
+                        )
+                        if (index == accordionItems.lastIndex) {
+                            drawRect(
+                                color = Color.Black.copy(alpha = 0.25f),
+                                topLeft = Offset(0f, size.height), // Below the bottom border
+                                size = Size(size.width, 3.5.dp.toPx()) // Shadow thickness
+                            )
+                        }
+                    },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    style = Typography.bodySmall,
+                    text = item.question,
+                    modifier = Modifier
+                        .weight(0.90f)
+                        .padding(start = 10.dp)
+                )
+                val chevronID =
+                    if (expandedIndex != index) R.drawable.chevron_down else R.drawable.chevron_up
 
-                    Spacer(modifier = Modifier.height(45.dp))
+                Icon(
+                    painter = painterResource(chevronID),
+                    contentDescription = "Toggle Expansion",
+                    modifier = Modifier
+                        .weight(0.1f)
+                        .padding(horizontal = 6.dp)
+                )
+                Spacer(modifier = Modifier.height(45.dp))
+            }
+
+            if (expandedIndex == index) {
+                AnimatedVisibility(
+                    visible = true,  // Show if this item is expanded
+                    enter = fadeIn() + expandVertically(animationSpec = tween(durationMillis = 300)),
+                    exit = fadeOut() + shrinkVertically(animationSpec = tween(durationMillis = 300))
+                ) {
+
+                    Text(
+                        text = item.answerExpandable,
+                        style = Typography.bodySmall,
+                        lineHeight = 12.sp * 1.6,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(br2)
+                            .padding(horizontal = 20.dp, vertical = 16.dp)
+                            .animateContentSize()
+                    )
                 }
             }
         }
     }
 }
+
+
 
 
 
