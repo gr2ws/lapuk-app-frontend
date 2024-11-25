@@ -37,8 +37,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.withTimeout
-import lapuk_app.views.main.checkConnection
 import lapuk_app.views.main.decodeToBitmap
 import lapuk_app.views.main.encodeBitmap
 import lapuk_app.views.main.requestAnalysis
@@ -47,6 +47,7 @@ import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br5
 import java.util.concurrent.CountDownLatch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun SavePreviewDialog(
     imageBitmap: Bitmap, onDismiss: (Boolean) -> Unit
@@ -58,15 +59,11 @@ fun SavePreviewDialog(
 
     LaunchedEffect(Unit) {
         try {
-            withTimeout(60000) { // throws error if not finished in 1 minute
-                if (!checkConnection()) throw Exception("Unable to reach server.")
-                else {
-                    requestAnalysis(encodedString = encodeBitmap(imageBitmap),
-                        callback = { result ->
-                            imageResult.value = decodeToBitmap(result)
-                            isLoading.value = false
-                        })
-                }
+            withTimeout(30000) { // throws error if not finished in 1 minute
+                requestAnalysis(encodedString = encodeBitmap(imageBitmap), callback = { result ->
+                    imageResult.value = decodeToBitmap(result)
+                    isLoading.value = false
+                })
             }
         } catch (e: Exception) { // show error message, if any. reset imageResult to original image
             Toast.makeText(
@@ -85,7 +82,7 @@ fun SavePreviewDialog(
         ).show()
     })
 
-    Dialog(onDismissRequest = { onDismiss(false) }) {
+    if (!isLoading.value) Dialog(onDismissRequest = { onDismiss(false) }) {
         Card(
             modifier = Modifier
                 .fillMaxHeight(.73f)

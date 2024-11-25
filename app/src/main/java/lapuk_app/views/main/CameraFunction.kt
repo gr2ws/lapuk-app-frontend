@@ -121,9 +121,12 @@ fun requestAnalysis(encodedString: String, callback: (String) -> Unit) {
         encodedString.toRequestBody("text/plain".toMediaTypeOrNull())
     ).build()
 
+    Log.e("Request", "Sending request to analyze image.")
+
     OkHttpClient().newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
             Log.e("Request", "Request failed: $e")
+            callback("e")
         }
 
         override fun onResponse(call: Call, response: Response) {
@@ -168,29 +171,4 @@ fun encodeBitmap(image: Bitmap): String {
 fun decodeToBitmap(encodedString: String): Bitmap {
     val byteArray = Base64.decode(encodedString, DEFAULT)
     return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-}
-
-/**
- * Tests connectivity to the server by requesting to the root endpoint and checking the response.
- *
- * @return True if the connection is successful, false otherwise.
- */
-fun checkConnection(): Boolean {
-    val request = Request.Builder().url("http://10.8.130.186:5000/").build()
-
-    var connection = false
-
-    OkHttpClient().newCall(request).enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            Log.e("ConnectivityTest", "Request failed: $e")
-        }
-
-        override fun onResponse(call: Call, response: Response) {
-            if (response.isSuccessful) {
-                connection = true
-            }
-        }
-    })
-
-    return connection
 }
