@@ -1,39 +1,88 @@
 package lapuk_app.views.main.ui.pages
 
+import android.graphics.Bitmap
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.withTimeout
+import lapuk_app.views.main.decodeToBitmap
+import lapuk_app.views.main.encodeBitmap
+import lapuk_app.views.main.requestAnalysis
 import lapuk_app.views.main.ui.theme.br1
 import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br5
+import java.util.concurrent.CountDownLatch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun SavePreviewDialog(
-    imageBitmap: ImageBitmap, onDismiss: (Boolean) -> Unit
+    imageBitmap: Bitmap, onDismiss: (Boolean) -> Unit
 ) {
-    Dialog(onDismissRequest = { onDismiss(false) }) {
+    val context = LocalContext.current
+    val loadingLatch = CountDownLatch(1)
+    val imageResult = remember { mutableStateOf<Bitmap?>(imageBitmap) }
+    val isLoading = remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        try {
+            withTimeout(30000) { // throws error if not finished in half minute
+                requestAnalysis(encodedString = encodeBitmap(imageBitmap), callback = { result ->
+                    imageResult.value = decodeToBitmap(result)
+                    isLoading.value = false
+                })
+            }
+        } catch (e: Exception) { // show error message, if any. reset imageResult to original image
+            Toast.makeText(
+                context, "Image Analysis Error: ${e.message}", Toast.LENGTH_SHORT
+            ).show()
+            isLoading.value = false
+            imageResult.value = imageBitmap
+        }
+    }
+
+    if (isLoading.value) LoadingDialog(onDismiss = {
+        loadingLatch.countDown() // Cancel the image analysis
+        onDismiss(false)
+        Toast.makeText(
+            context, "Image Analysis Cancelled.", Toast.LENGTH_SHORT
+        ).show()
+    })
+
+    if (!isLoading.value) Dialog(onDismissRequest = { onDismiss(false) }) {
         Card(
             modifier = Modifier
                 .fillMaxHeight(.73f)
@@ -44,7 +93,7 @@ fun SavePreviewDialog(
         ) {
             Column {
                 Image(
-                    imageBitmap,
+                    imageResult.value!!.asImageBitmap(),
                     contentDescription = "Captured Image",
                     modifier = Modifier
                         .fillMaxWidth()
@@ -52,10 +101,10 @@ fun SavePreviewDialog(
                         .padding(15.dp),
                     contentScale = ContentScale.Fit
                 )
+
                 Text(
                     "Save this classification?",
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
                 Row(
                     modifier = Modifier
@@ -86,13 +135,42 @@ fun SavePreviewDialog(
                         .shadow(2.dp, shape = RoundedCornerShape(10.dp))
                         .background(br3, shape = RoundedCornerShape(10.dp)), onClick = {
 
-                        onDismiss(true)
+                        onDismiss(false)
                     }) {
                         Text(
                             text = "Save", modifier = Modifier.padding(3.dp)
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun LoadingDialog(onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        Column {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxSize(.3f)
+                    .background(Color.Transparent),
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(80.dp),
+                    color = Color.White,
+                )
+                Text(
+                    "Analyzing image...\nTap anywhere to cancel.",
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(10.dp),
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }

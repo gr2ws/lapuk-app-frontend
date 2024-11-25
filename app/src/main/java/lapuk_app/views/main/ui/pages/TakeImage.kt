@@ -1,5 +1,6 @@
 package lapuk_app.views.main.ui.pages
 
+import android.graphics.Bitmap
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.background
@@ -26,14 +27,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import com.example.lapuk_app.R
-import lapuk_app.views.main.CameraFunction
+import lapuk_app.views.main.ShowCameraView
+import lapuk_app.views.main.getPermission
+import lapuk_app.views.main.hasPermission
+import lapuk_app.views.main.takePhoto
 import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br5
 
@@ -47,28 +51,39 @@ import lapuk_app.views.main.ui.theme.br5
 fun TakeImagePage(navController: NavHostController) {
     var hasCameraPermission by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
-    val currentImage = remember { mutableStateOf<ImageBitmap?>(null) }
+
+    val imageDialog = remember { mutableStateOf<Bitmap?>(null) }
 
     val context = LocalContext.current
-
     val controller = remember {
         LifecycleCameraController(context).apply {
             setEnabledUseCases(CameraController.IMAGE_CAPTURE)
         }
     }
 
+    // Function to unbind camera use cases
+    fun unbindCamera(){
+        controller.unbind()
+    }
+
+    // rebind camera use cases
+    @Composable
+    fun rebindCamera() {
+        controller.bindToLifecycle(LocalLifecycleOwner.current)
+    }
+
     // Request camera permission when the composable is first composed
     LaunchedEffect(key1 = Unit) {
-        if (CameraFunction().hasPermission(context)) hasCameraPermission = true
-         else { // if permission not granted, ask permission and check again
-            CameraFunction().getPermission(context)
-            if(CameraFunction().hasPermission(context)) hasCameraPermission = true
+        if (hasPermission(context)) hasCameraPermission = true
+        else { // if permission not granted, ask permission and check again
+            getPermission(context)
+            if (hasPermission(context)) hasCameraPermission = true
         }
     }
 
     // Display camera preview if camera permission is granted
-    if (hasCameraPermission) {
-        CameraFunction().ShowCameraView(
+    if (hasCameraPermission && !showDialog) {
+        ShowCameraView(
             controller = controller, modifier = Modifier
                 .zIndex(-2f)
                 .fillMaxSize()
@@ -148,13 +163,13 @@ fun TakeImagePage(navController: NavHostController) {
                 .border(4.5.dp, br5, shape = RoundedCornerShape(20.dp))
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
                 .background(br3, shape = RoundedCornerShape(20.dp))
-                .align(alignment = Alignment.Center),
-                onClick = {
-                    CameraFunction().takePhoto(controller, context) { image ->
-                        currentImage.value = image
-                        showDialog = true
-                    }
-                }) {
+                .align(alignment = Alignment.Center), onClick = {
+                takePhoto(controller, context) { image ->
+                    imageDialog.value = image
+                    showDialog = true
+                    unbindCamera()
+                }
+            }) {
                 Icon(
                     modifier = Modifier.fillMaxSize(.63f),
                     painter = painterResource(id = R.drawable.camera),
@@ -179,11 +194,13 @@ fun TakeImagePage(navController: NavHostController) {
                 )
             }
 
-            if (showDialog && currentImage.value != null) {
-                SavePreviewDialog(imageBitmap = currentImage.value!!, onDismiss = {
+            if (showDialog && imageDialog.value != null) {
+                SavePreviewDialog(imageBitmap = imageDialog.value!!, onDismiss = {
                     showDialog = it
                 })
+                if (showDialog) rebindCamera()
             }
+
         }
     }
 }
