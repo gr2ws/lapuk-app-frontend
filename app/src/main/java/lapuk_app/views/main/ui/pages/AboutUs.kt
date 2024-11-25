@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.lapuk_app.R
 import lapuk_app.views.main.ui.theme.Typography
 import lapuk_app.views.main.ui.theme.br6
@@ -100,18 +101,18 @@ fun AboutUsPage() {
         ) {
             Text(
                 style = Typography.titleMedium,
-                text = "About Us"
+                text = "ABOUT US"
             )
         }
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 18.dp),
+                .padding(top = 10.dp, bottom = 18.dp, start = 42.dp, end = 42.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                style = Typography.bodyLarge,
+                style = Typography.bodyMedium,
                 text = "Learn more about the creators of the LAPUK app in this page!",
                 textAlign = TextAlign.Center
             )
@@ -134,7 +135,7 @@ fun AboutUsPage() {
             ) {
 
                 var currentPage by remember { mutableIntStateOf(0) }
-                val swipeThreshold = 86f // Adjust this value to control sensitivity
+                val swipeThreshold = 80f // Adjust this value to control sensitivity
                 val currentPerson = people[currentPage]
 
                 Row(
@@ -197,16 +198,10 @@ fun AboutUsPage() {
 
                                 // Apply the threshold for dragAmount before changing pages
                                 if (abs(dragAmount) > swipeThreshold) {
-                                    // Use when expression to determine the next page based on drag direction
-                                    currentPage = when {
-                                        dragAmount < 0 -> (currentPage + 1).coerceIn(
-                                            0,
-                                            people.size - 1
-                                        ) // Swipe left
-                                        dragAmount > 0 -> (currentPage - 1).coerceIn(
-                                            0,
-                                            people.size - 1
-                                        ) // Swipe right
+                                    currentPage =
+                                        when {
+                                            dragAmount < 0 -> (currentPage + 1).coerceIn(0, people.size - 1) // Swipe left
+                                            dragAmount > 0 -> (currentPage - 1).coerceIn(0, people.size - 1) // Swipe right
                                         else -> currentPage
                                     }
                                 }
@@ -225,23 +220,27 @@ fun AboutUsPage() {
                     ) {
 
                         Text(
-                            modifier = Modifier.padding(top = 28.dp),
-                            style = Typography.labelLarge,
+                            modifier = Modifier.padding(top = 20.dp),
                             text = currentPerson.name,
+                            style = Typography.labelLarge,
+                            fontSize = if (currentPage == 1) 23.sp else 24.sp,
                             textAlign = TextAlign.Center
                         )
 
                         Spacer(modifier = Modifier.height(20.dp))
 
                         Text(
-                            style = Typography.bodyMedium,
                             text = currentPerson.body.trimIndent(),
+                            style = Typography.bodyMedium,
                             textAlign = TextAlign.Center
                         )
 
                         Spacer(modifier = Modifier.height(20.dp))
 
                         SocialMediaContainer(currentPerson)
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
                     }
                 }
             }
@@ -276,13 +275,13 @@ fun SocialMediaContainer(currentPerson: Person) {
             ) {
                 Icon(
                     painter = icon,
-                    contentDescription = "description",
                     modifier = Modifier
                         .size(38.dp)
                         .padding(bottom = 2.dp)
                         .clickable {
                             context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(link)))
-                        }
+                        },
+                    contentDescription = "description"
                 )
             }
         }

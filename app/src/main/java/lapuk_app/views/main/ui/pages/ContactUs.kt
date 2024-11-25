@@ -52,13 +52,13 @@ fun ContactUsPage(){
         //title
         Box(
             modifier = Modifier
-                .padding(vertical = 40.dp)
+                .padding(vertical = 32.dp)
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 style = Typography.titleMedium,
-                text = "Contact Us"
+                text = "CONTACT US"
             )
         }
 
@@ -71,10 +71,8 @@ fun ContactUsPage(){
         ) {
             Text(
                 style = Typography.bodyLarge,
-                text =
-                    """
-                        For any comments, suggestions, or business inquiries, feel free to send us a message via GMail.
-                    """.trimIndent(),
+                text = "For any comments, suggestions, or business inquiries, feel free to send us a message via GMail."
+                    .trimIndent(),
                 textAlign = TextAlign.Center
             )
         }
@@ -83,7 +81,7 @@ fun ContactUsPage(){
         //button
         Box(
             modifier = Modifier
-                .padding(vertical = 26.dp, horizontal = 12.dp)
+                .padding(vertical = 24.dp, horizontal = 12.dp)
                 .height(88.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .background(color = br4)
@@ -136,10 +134,7 @@ fun ContactUsPage(){
                 modifier = Modifier
                     .padding(horizontal = 36.dp),
                 style = Typography.bodyLarge,
-                text =
-                """
-                    Your thoughts are all greatly appreciated!
-                """.trimIndent(),
+                text = "Your thoughts are all greatly appreciated!".trimIndent(),
                 textAlign = TextAlign.Center
             )
         }

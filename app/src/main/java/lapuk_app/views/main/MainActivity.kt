@@ -20,7 +20,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import lapuk_app.views.main.ui.elements.BottomBar
+import lapuk_app.views.main.ui.elements.SpeechBubble
 import lapuk_app.views.main.ui.elements.TopBar
+import lapuk_app.views.main.ui.pages.AboutUsPage
 import lapuk_app.views.main.ui.pages.ContactUsPage
 import lapuk_app.views.main.ui.pages.FAQsPage
 import lapuk_app.views.main.ui.pages.PrivacyPolicyPage
@@ -87,10 +89,20 @@ fun MainScreen() {
 
                         composable("heatmap") { TODO() }
 
-                        composable("info") { TODO() }
+                        // information center
+                        composable("info") {
+                            SpeechBubble { option ->
+                                when (option) {
+                                    "FAQs" -> navController.navigate("info/frequently-asked-questions")
+                                    "About Us" -> navController.navigate("info/about-us")
+                                    "Contact Us" -> navController.navigate("info/contact-us")
+                                    "Privacy Policy" -> navController.navigate("info/privacy-policy")
+                                }
+                            }
+                        }
                         composable("info/privacy-policy") { PrivacyPolicyPage() }
                         composable("info/contact-us") { ContactUsPage() }
-                        composable("info/about-us") { TODO() }
+                        composable("info/about-us") { AboutUsPage() }
                         composable("info/frequently-asked-questions") { FAQsPage() }
                     }
                 }
