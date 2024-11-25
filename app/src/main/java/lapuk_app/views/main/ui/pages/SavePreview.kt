@@ -59,7 +59,7 @@ fun SavePreviewDialog(
 
     LaunchedEffect(Unit) {
         try {
-            withTimeout(30000) { // throws error if not finished in 1 minute
+            withTimeout(30000) { // throws error if not finished in half minute
                 requestAnalysis(encodedString = encodeBitmap(imageBitmap), callback = { result ->
                     imageResult.value = decodeToBitmap(result)
                     isLoading.value = false

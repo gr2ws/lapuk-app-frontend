@@ -117,7 +117,7 @@ fun takePhoto(
  * @return The result of the analysis as a string.
  */
 fun requestAnalysis(encodedString: String, callback: (String) -> Unit) {
-    val request = Request.Builder().url("http://10.8.130.186:5000/detect").post(
+    val request = Request.Builder().url("http://127.0.0.1:5000").post(
         encodedString.toRequestBody("text/plain".toMediaTypeOrNull())
     ).build()
 
