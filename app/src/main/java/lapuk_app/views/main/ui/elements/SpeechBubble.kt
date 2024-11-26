@@ -1,7 +1,6 @@
 package lapuk_app.views.main.ui.elements
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +13,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,12 +30,25 @@ import androidx.graphics.shapes.RoundedPolygon
 import androidx.graphics.shapes.toPath
 import lapuk_app.views.main.ui.theme.Typography
 import lapuk_app.views.main.ui.theme.br3
+import lapuk_app.views.main.ui.theme.br6
+import lapuk_app.views.main.ui.theme.wh1
+
+data class Item (
+    val name: String,
+    val route: String
+) {/*...*/}
 
 //@Preview
 @Composable
-fun SpeechBubble(onOptionClick: (String) -> Unit) {
+fun SpeechBubble(lastRoute : String, onOptionClick: (String) -> Unit) {
 
-    val options = listOf("FAQs", "About Us", "Contact Us", "Privacy Policy")
+    var selectedOption by remember { mutableStateOf<String?>(null) }
+    val options = listOf(
+        Item("FAQs", "info/frequently-asked-questions"),
+        Item("About Us", "info/about-us"),
+        Item("Contact Us", "info/contact-us"),
+        Item("Privacy Policy", "info/privacy-policy")
+    )
 
     // container (Box) for everything
     Box(
@@ -55,28 +71,31 @@ fun SpeechBubble(onOptionClick: (String) -> Unit) {
                                 bottomEnd = if (index == options.size - 1) 12.dp else 0.dp
                             )
                         )
-                        .border(
-                            width = if (index == 1 || index == 2) 0.1.dp else 0.dp,
-                            color = Color.Black,
-                        )
                         .fillMaxWidth(1f)
-                        .background(br3)
-                        .clickable { onOptionClick(option) },
+                        .clickable {
+                            selectedOption = option.name
+                            onOptionClick(option.name) }
+                        .background(
+                            color = if (lastRoute == option.route) br6 else br3
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = option,
+                        text = option.name,
+                        color = if (lastRoute == option.route) wh1 else Color.Black,
                         modifier = Modifier.padding(vertical = 12.dp, horizontal = 0.dp),
-                        style = Typography.bodyMedium
+                        style = Typography.bodyMedium,
                     )
                 }
             }
 
+            // Triangle element
             Box(
                 modifier = Modifier
                     .padding(0.dp)
                     .background(color = Color.Transparent)
-                    .offset(x = 20.dp, y = (-20).dp)
+                    .offset(x = 48.dp, y = (-20).dp)
+                    .size(55.dp)
                     .drawWithCache {
                         val roundedPolygon = RoundedPolygon(
                             numVertices = 3,
@@ -89,10 +108,15 @@ fun SpeechBubble(onOptionClick: (String) -> Unit) {
                             .asComposePath()
                         onDrawBehind {
                             rotate(degrees = 90f, pivot = Offset(size.width/2, size.height/2))
-                            { drawPath(roundedPolygonPath, color = br3) }
+                            {
+                                drawPath(
+                                    roundedPolygonPath,
+                                    color = if (selectedOption == "Privacy Policy"
+                                        || lastRoute == "info/privacy-policy") br6 else br3
+                                )
+                            }
                         }
                     }
-                    .size(55.dp)
             )
         }
     }

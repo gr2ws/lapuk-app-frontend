@@ -6,9 +6,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,7 +57,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}   
+}
 
 @Preview(
     showBackground = true, device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
@@ -59,9 +65,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    var lastNavigatedRoute by remember { mutableStateOf("info/about-us") }
 
     LapukTheme {
-        Scaffold(modifier = Modifier.fillMaxSize(),
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
 
             topBar = {
                 TopBar()
@@ -77,7 +85,7 @@ fun MainScreen() {
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = "info/frequently-asked-questions",
+                        startDestination = "info/about-us",
                         modifier = Modifier.fillMaxSize()
                     ) {
                         composable("home") { TODO() }
@@ -89,21 +97,44 @@ fun MainScreen() {
 
                         composable("heatmap") { TODO() }
 
-                        // information center
                         composable("info") {
-                            SpeechBubble { option ->
+                            CallSpeechBubble(lastNavigatedRoute) { option ->
                                 when (option) {
-                                    "FAQs" -> navController.navigate("info/frequently-asked-questions")
-                                    "About Us" -> navController.navigate("info/about-us")
-                                    "Contact Us" -> navController.navigate("info/contact-us")
-                                    "Privacy Policy" -> navController.navigate("info/privacy-policy")
+                                    "FAQs" -> {
+                                        lastNavigatedRoute = "info/frequently-asked-questions"
+                                        navController.navigate("info/frequently-asked-questions")
+                                    }
+
+                                    "About Us" -> {
+                                        lastNavigatedRoute = "info/about-us"
+                                        navController.navigate("info/about-us")
+                                    }
+
+                                    "Contact Us" -> {
+                                        lastNavigatedRoute = "info/contact-us"
+                                        navController.navigate("info/contact-us")
+                                    }
+
+                                    "Privacy Policy" -> {
+                                        lastNavigatedRoute = "info/privacy-policy"
+                                        navController.navigate("info/privacy-policy")
+                                    }
                                 }
                             }
                         }
-                        composable("info/privacy-policy") { PrivacyPolicyPage() }
-                        composable("info/contact-us") { ContactUsPage() }
-                        composable("info/about-us") { AboutUsPage() }
-                        composable("info/frequently-asked-questions") { FAQsPage() }
+
+                        composable("info/privacy-policy") {
+                            PrivacyPolicyPage()
+                        }
+                        composable("info/contact-us") {
+                            ContactUsPage()
+                        }
+                        composable("info/about-us") {
+                            AboutUsPage()
+                        }
+                        composable("info/frequently-asked-questions") {
+                            FAQsPage()
+                        }
                     }
                 }
             },
@@ -114,3 +145,24 @@ fun MainScreen() {
     }
 }
 
+@Composable
+fun CallSpeechBubble(
+    lastRoute: String,
+    onOptionClick: (String) -> Unit
+) {
+    // Render the last-navigated route here
+    when (lastRoute) {
+        "info/about-us" -> AboutUsPage()
+        "info/contact-us" -> ContactUsPage()
+        "info/privacy-policy" -> PrivacyPolicyPage()
+        "info/frequently-asked-questions" -> FAQsPage()
+    }
+
+    Box(
+        modifier = Modifier.offset(x = (-10).dp, y = 28.dp),
+        contentAlignment = Alignment.BottomEnd
+    ) {
+        // Overlay SpeechBubble
+        SpeechBubble(lastRoute, onOptionClick)
+    }
+}

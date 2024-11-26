@@ -90,27 +90,28 @@ fun BottomBar(navController: NavController) {
     ) {
         items.forEachIndexed { index, item ->
             NavigationBarItem(icon = {
-                Icon(
-                    icons[index], contentDescription = item
-                )
+                Icon(icons[index], contentDescription = item)
             }, label = { Text(item) }, selected = selectedItem == index, onClick = {
                 selectedItem = index
                 navController.navigate(navigationLabel[index]) {
-                    popUpTo(navController.graph.startDestinationId) {
-                        saveState = true
-                    }
+                    popUpTo(navController.graph.startDestinationId) { saveState = true }
                     launchSingleTop = true
                     restoreState = true
                 }
-            }, colors = NavigationBarItemColors(
-                selectedIconColor = Color.White,
-                selectedTextColor = Color.Black,
-                selectedIndicatorColor = br5,
-                unselectedIconColor = Color.Black,
-                unselectedTextColor = Color.Black,
-                disabledIconColor = Color.Red,
-                disabledTextColor = Color.Red
-            )
+                if (item == "Info") {
+                    navController.navigate("info")
+                    println("button tapped @ index $index")
+                }
+            },
+                colors = NavigationBarItemColors(
+                    selectedIconColor = Color.White,
+                    selectedTextColor = Color.Black,
+                    selectedIndicatorColor = br5,
+                    unselectedIconColor = Color.Black,
+                    unselectedTextColor = Color.Black,
+                    disabledIconColor = Color.Red,
+                    disabledTextColor = Color.Red
+                )
             )
         }
     }
