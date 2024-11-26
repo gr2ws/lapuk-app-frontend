@@ -37,7 +37,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
+import lapuk_app.views.main.AnalysisResults
 import lapuk_app.views.main.decodeToBitmap
 import lapuk_app.views.main.encodeBitmap
 import lapuk_app.views.main.requestAnalysis
@@ -47,30 +52,49 @@ import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br4
 import lapuk_app.views.main.ui.theme.br5
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun SavePreviewDialog(
     imageBitmap: Bitmap, onDismiss: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
+
+    // result values
+    val analysisResults = remember { mutableStateOf<AnalysisResults?>(null) }
     val imageResult = remember { mutableStateOf<Bitmap?>(imageBitmap) }
+    val listDetections = remember { mutableStateOf<List<Pair<String, Float>>>(emptyList()) }
+
+    // flags
     val isLoading = remember { mutableStateOf(true) }
     val isAnalysisSuccessful = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         try {
-            withTimeout(30000) { // throws error if not finished in half minute
-                requestAnalysis(encodedString = encodeBitmap(imageBitmap), callback = { result ->
-                    try {
-                        imageResult.value = decodeToBitmap(result)
-                        isAnalysisSuccessful.value = true
-                    } catch (e: Exception) {
-                        isAnalysisSuccessful.value = false
-                    } finally {
-                        isLoading.value = false
+            withTimeoutOrNull(30000) {
+                // Launch requestAnalysis in a separate coroutine
+                val result = withContext(Dispatchers.IO) {
+                    suspendCancellableCoroutine<AnalysisResults?> { continuation ->
+                        requestAnalysis(encodedString = encodeBitmap(imageBitmap),
+                            callback = { result ->
+                                continuation.resume(result, null)
+                            })
                     }
-                })
+                }
+
+                // Process the result if not null
+                if (result != null) {
+                    analysisResults.value = result
+                    imageResult.value = decodeToBitmap(analysisResults.value!!.image)
+                    listDetections.value = analysisResults.value!!.detections
+                    isAnalysisSuccessful.value = true
+                }
+            } ?: run {
+                isLoading.value = false
+                isAnalysisSuccessful.value = false
+                throw Exception("Unable to receive results after 30 seconds.")
             }
-        } catch (e: Exception) { // show error message, if any. reset imageResult to original image
+        } catch (e: Exception) {
+            // Handle errors
             Toast.makeText(
                 context, "Image Analysis Error: ${e.message}", Toast.LENGTH_SHORT
             ).show()
@@ -79,6 +103,8 @@ fun SavePreviewDialog(
             isAnalysisSuccessful.value = false
 
             imageResult.value = imageBitmap
+        } finally {
+            isLoading.value = false // Ensure loading state is reset
         }
     }
 
@@ -107,11 +133,10 @@ fun SavePreviewDialog(
                         contentDescription = "Captured Image",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .fillMaxHeight(.8f)
-                            .padding(15.dp),
+                            .padding(15.dp)
+                            .fillMaxHeight(.8f),
                         contentScale = ContentScale.Fit
                     )
-
                     Text(
                         "Save this classification?",
                         modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -125,37 +150,63 @@ fun SavePreviewDialog(
                         // Retake button
                         IconButton(modifier = Modifier
                             .height(50.dp)
-                            .width(100.dp)
+                            .width(90.dp)
                             .border(2.dp, br5, shape = RoundedCornerShape(10.dp))
                             .shadow(2.dp, shape = RoundedCornerShape(10.dp))
-                            .background(br3, shape = RoundedCornerShape(10.dp)), onClick = {
-                            onDismiss(false)
+                            .background(br3, shape = RoundedCornerShape(10.dp)),
+                            onClick = {
+                                onDismiss(false)
                         }) {
                             Text(
                                 text = "Retake", modifier = Modifier.padding(3.dp)
                             )
                         }
 
+                        // See detections button
+                        IconButton(modifier = Modifier
+                            .height(50.dp)
+                            .width(120.dp)
+                            .border(
+                                2.dp,
+                                if (isAnalysisSuccessful.value) br5 else br4,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .shadow(2.dp, shape = RoundedCornerShape(10.dp))
+                            .background(
+                                if (isAnalysisSuccessful.value) br3 else br2,
+                                shape = RoundedCornerShape(10.dp)
+                            ), enabled = isAnalysisSuccessful.value,
+                            onClick = {
+                                Toast.makeText(
+                                    context,
+                                    "Detections: ${listDetections.value}",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                        }) {
+                            Text(
+                                text = "Detections",
+                                modifier = Modifier.padding(3.dp),
+                                color = if (isAnalysisSuccessful.value) Color.Black else br5
+                            )
+                        }
+
                         // Save button
-                        IconButton(
-                            modifier = Modifier
-                                .height(50.dp)
-                                .width(100.dp)
-                                .border(
-                                    2.dp,
-                                    if (isAnalysisSuccessful.value) br5 else br4,
-                                    shape = RoundedCornerShape(10.dp)
-                                )
-                                .shadow(2.dp, shape = RoundedCornerShape(10.dp))
-                                .background(
-                                    if (isAnalysisSuccessful.value) br3 else br2,
-                                    shape = RoundedCornerShape(10.dp)
-                                ),
-                            enabled = isAnalysisSuccessful.value,
+                        IconButton(modifier = Modifier
+                            .height(50.dp)
+                            .width(90.dp)
+                            .border(
+                                2.dp,
+                                if (isAnalysisSuccessful.value) br5 else br4,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .shadow(2.dp, shape = RoundedCornerShape(10.dp))
+                            .background(
+                                if (isAnalysisSuccessful.value) br3 else br2,
+                                shape = RoundedCornerShape(10.dp)
+                            ), enabled = isAnalysisSuccessful.value,
                             onClick = {
                                 onDismiss(false)
-                            }
-                        ) {
+                        }) {
                             Text(
                                 text = "Save",
                                 modifier = Modifier.padding(3.dp),
@@ -197,3 +248,4 @@ fun LoadingDialog(onDismiss: () -> Unit) {
         }
     }
 }
+
