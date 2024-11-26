@@ -21,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import lapuk_app.views.main.ui.elements.BottomBar
 import lapuk_app.views.main.ui.elements.TopBar
+import lapuk_app.views.main.ui.pages.ArticlesPage
 import lapuk_app.views.main.ui.pages.SegregatePage
 import lapuk_app.views.main.ui.theme.LapukTheme
 import lapuk_app.views.main.ui.theme.br1
@@ -69,7 +70,7 @@ fun MainScreen() {
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = "segregate",
+                        startDestination = "articles",
                         modifier = Modifier.fillMaxSize()
                     ) {
                         composable("home") {
@@ -79,7 +80,7 @@ fun MainScreen() {
                             SegregatePage()
                         }
                         composable("articles") {
-                            TODO()
+                            ArticlesPage()
                         }
                         composable("heatmap") {
                             TODO()
