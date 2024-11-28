@@ -191,14 +191,16 @@ fun ArticleCard(article: Article) {
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(.90f) // Set a fixed
+                .fillMaxWidth(.9f) // Set a fixed
                 .padding(1.dp),
             shape = RoundedCornerShape(20.dp)
                 ){
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillMaxWidth()
+                        .height(650.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Image(
                         painter = painterResource(id = article.imageResource),
@@ -214,15 +216,17 @@ fun ArticleCard(article: Article) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .weight(1f)
                             .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(8.dp),
                             text = article.description, // Heading
-                            fontSize = 20.sp, // Larger font size
+                            fontSize = 28.sp, // Larger font size
                             fontWeight = FontWeight.Bold, // Bold
                             textAlign = TextAlign.Center
                         )
@@ -240,8 +244,8 @@ fun ArticleCard(article: Article) {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Button(onClick = { uriHandler.openUri(article.url) }, modifier = Modifier.padding(8.dp)) {
-                            Text("Open Article in Browser")
+                        Button(onClick = { uriHandler.openUri(article.url) }, modifier = Modifier.padding(8.dp) .width(200.dp)) {
+                            Text("Open Article in Browser", fontSize = 12.sp)
                         }
                     }
                 }
