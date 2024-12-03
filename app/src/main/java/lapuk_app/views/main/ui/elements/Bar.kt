@@ -62,8 +62,8 @@ fun TopBar() {
  * @param navController The NavController used for navigation.
  */
 @Composable
-fun BottomBar(navController: NavController) {
-    val selectedItemState = remember { mutableIntStateOf(1) }
+fun BottomBar(navController: NavController, pageClicked : Int) {
+    val selectedItemState = remember { mutableIntStateOf(pageClicked) }
     var selectedItem by remember { selectedItemState }
 
     val items = listOf(
@@ -89,19 +89,21 @@ fun BottomBar(navController: NavController) {
         containerColor = br1,
     ) {
         items.forEachIndexed { index, item ->
+
             NavigationBarItem(icon = {
                 Icon(icons[index], contentDescription = item)
-            }, label = { Text(item) }, selected = selectedItem == index, onClick = {
-                selectedItem = index
-                navController.navigate(navigationLabel[index]) {
-                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
+            },
+                label = { Text(item) },
+                selected = selectedItem == index,
+                onClick = {
+                    selectedItem = index
+                    navController.navigate(navigationLabel[index]) {
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
                 }
-                if (item == "Info") {
-                    navController.navigate("info")
-                    println("button tapped @ index $index")
-                }
+     // DO NOT REMOVE THE CODE BELOW ! IT WILL RUIN THE SPEECH BUBBLE FUNCTIONALITY //
+                if (item == "Info") { navController.navigate("info") }
             },
                 colors = NavigationBarItemColors(
                     selectedIconColor = Color.White,
