@@ -25,9 +25,13 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFontsVersion" }
 androidx-ui-text-google-fonts-v151 = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 okhttp = "4.9.0"
+graphicsShapesAndroid = "1.0.1"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFontsVersion" }
+androidx-ui-text-google-fonts-v151 = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -53,6 +57,8 @@ androidx-camera-view = { group = "androidx.camera", name = "camera-view", versio
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist_pager" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist_pager_indicators" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+androidx-graphics-shapes-android = { group = "androidx.graphics", name = "graphics-shapes-android", version.ref = "graphicsShapesAndroid" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

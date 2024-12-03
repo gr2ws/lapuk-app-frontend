@@ -85,7 +85,7 @@ fun FAQsPage() {
             Text(
                 modifier = Modifier.padding(horizontal = 24.dp),
                 text = "Got some questions in mind on LAPUK? Check here--you’ll likely find your answer!",
-                style = Typography.bodySmall,
+                style = Typography.bodyMedium,
                 textAlign = TextAlign.Center
             )
         }

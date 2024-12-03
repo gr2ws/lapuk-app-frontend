@@ -2,11 +2,21 @@ package lapuk_app.views.main.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.example.lapuk_app.R
+
+val Nunito = FontFamily(
+    Font(R.font.nunito_regular),  // Regular weight
+    Font(R.font.nunito_bold, FontWeight.Bold),  // Bold weight
+    Font(R.font.nunito_semibold, FontWeight.SemiBold)
+)
+
 
 val Typography = Typography(
+
 
     /*       SUMMARY OF SPACINGS        */
     //======= (all units in .sp) =======//
@@ -23,7 +33,7 @@ val Typography = Typography(
     /* Label (S) --> 16 (bold)          */
 
     bodyLarge = TextStyle(
-        fontFamily = FontFamily.SansSerif,
+        fontFamily = Nunito,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 16.sp * 2.0,
@@ -31,7 +41,7 @@ val Typography = Typography(
     ),
 
     bodyMedium = TextStyle( // default labels, body text
-        fontFamily = FontFamily.SansSerif,
+        fontFamily = Nunito,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         lineHeight = 14.sp * 1.4,
@@ -39,7 +49,7 @@ val Typography = Typography(
     ),
 
     bodySmall = TextStyle(
-        fontFamily = FontFamily.SansSerif,
+        fontFamily = Nunito,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         lineHeight = 12.sp * 1.8,
@@ -47,31 +57,31 @@ val Typography = Typography(
     ),
 
     titleLarge = TextStyle(
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Bold,
-        fontSize = 60.sp,
+        fontFamily = Nunito,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 52.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),
 
     titleMedium = TextStyle(
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Bold,
-        fontSize = 48.sp,
+        fontFamily = Nunito,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 42.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.sp
     ),
 
     titleSmall = TextStyle(
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Bold,
+        fontFamily = Nunito,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 36.sp,
         lineHeight = 36.sp * 1.5,
         letterSpacing = 0.sp
     ),
 
     labelLarge = TextStyle(
-        fontFamily = FontFamily.SansSerif,
+        fontFamily = Nunito,
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
         letterSpacing = 0.sp
@@ -85,7 +95,7 @@ val Typography = Typography(
 //    ),
 
     labelSmall = TextStyle(
-        fontFamily = FontFamily.SansSerif,
+        fontFamily = Nunito,
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
         letterSpacing = 0.sp
