@@ -64,7 +64,7 @@ fun TopBar() {
 @Composable
 fun BottomBar(navController: NavController, pageClicked : Int) {
     val selectedItemState = remember { mutableIntStateOf(pageClicked) }
-    var selectedItem by remember { selectedItemState }
+    var selectedItem = pageClicked
 
     val items = listOf(
         "Home", "Segregate", "Articles", "Heatmap", "Info"
@@ -98,10 +98,15 @@ fun BottomBar(navController: NavController, pageClicked : Int) {
                 onClick = {
                     selectedItem = index
                     navController.navigate(navigationLabel[index]) {
-                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        popUpTo(navController.graph.startDestinationId) {
+                            if (index == 0)
+                                inclusive = true
+                            else
+                                saveState = true
+                        }
                         launchSingleTop = true
-                        restoreState = true
-                }
+                        restoreState = (index != 0) // Don't restore state for 'Home'
+                    }
      // DO NOT REMOVE THE CODE BELOW ! IT WILL RUIN THE SPEECH BUBBLE FUNCTIONALITY //
                 if (item == "Info") { navController.navigate("info") }
             },

@@ -108,7 +108,11 @@ fun MainScreen() {
                             TakeImagePage(navController)
                         }
 
-                        composable("articles") { ArticlesPage() }
+                        composable("articles") {
+                            lastNavigatedRoute = "articles"
+                            indexOfLastPageAccessed = 2
+                            ArticlesPage()
+                        }
 
                         composable("heatmap") { TODO() }
 
@@ -116,43 +120,48 @@ fun MainScreen() {
                             CallSpeechBubble(lastNavigatedRoute) { option ->
                                 when (option) {
                                     "FAQs" -> {
-                                        lastNavigatedRoute = "info/frequently-asked-questions"
                                         navController.navigate("info/frequently-asked-questions")
+                                        indexOfLastPageAccessed = 4
                                     }
 
                                     "About Us" -> {
-                                        lastNavigatedRoute = "info/about-us"
                                         navController.navigate("info/about-us")
+                                        indexOfLastPageAccessed = 4
                                     }
 
                                     "Contact Us" -> {
                                         lastNavigatedRoute = "info/contact-us"
                                         navController.navigate("info/contact-us")
+                                        indexOfLastPageAccessed = 4
                                     }
 
                                     "Privacy Policy" -> {
                                         lastNavigatedRoute = "info/privacy-policy"
                                         navController.navigate("info/privacy-policy")
+                                        indexOfLastPageAccessed = 4
                                     }
                                 }
-                                indexOfLastPageAccessed = 4
                             }
                         }
 
-                        composable("info/privacy-policy") {
-                            PrivacyPolicyPage()
+                        composable("info/frequently-asked-questions") {
+                            lastNavigatedRoute = "info/frequently-asked-questions"
+                            FAQsPage()
                             indexOfLastPageAccessed = 4
                         }
                         composable("info/contact-us") {
+                            lastNavigatedRoute = "info/contact-us"
                             ContactUsPage()
                             indexOfLastPageAccessed = 4
                         }
                         composable("info/about-us") {
+                            lastNavigatedRoute = "info/about-us"
                             AboutUsPage()
                             indexOfLastPageAccessed = 4
                         }
-                        composable("info/frequently-asked-questions") {
-                            FAQsPage()
+                        composable("info/privacy-policy") {
+                            lastNavigatedRoute = "info/privacy-policy"
+                            PrivacyPolicyPage()
                             indexOfLastPageAccessed = 4
                         }
                     }

@@ -26,8 +26,15 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.lapuk_app.R
+import lapuk_app.views.main.ui.theme.Typography
 
-@OptIn(ExperimentalMaterial3Api::class)
+data class Article(
+    val imageResource: Int,
+    val description: String,
+    val popupText: String,
+    val url: String
+) {/*...*/}
+
 @Composable
 fun ArticlesPage() {
     Column(
@@ -37,7 +44,7 @@ fun ArticlesPage() {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("ARTICLES", fontSize = 58.sp, modifier = Modifier.padding(top = 48.dp))
+        Text("ARTICLES", style = Typography.titleMedium, modifier = Modifier.padding(top = 48.dp))
         Text(
             "Exposure to landfill areas pose risks to your health. Stay informed with these health articles from the internet:",
             fontSize = 14.sp,
@@ -132,15 +139,6 @@ fun ArticleList() {
     }
 }
 
-
-data class Article(
-    val imageResource: Int,
-    val description: String,
-    val popupText: String,
-    val url: String
-)
-
-
 @Composable
 fun ArticleCard(article: Article) {
     var showPopup by remember { mutableStateOf(false) }
@@ -165,18 +163,19 @@ fun ArticleCard(article: Article) {
             contentDescription = "Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .fillMaxWidth() // Fill the available width
-                .wrapContentHeight() // Set a fixed height (adjust as needed)
-                .weight(0.40f) // Occupy 37% of the width
-                .clip(RectangleShape) // Clip to a rectangle to prevent image overflow
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .weight(0.40f)
+                .clip(RectangleShape)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = article.description,
-            fontSize = 10.sp,
+            style = Typography.bodySmall,
+            lineHeight = 14.sp * 1.15,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .weight(0.65f) // Occupy 60% of the width
+                .weight(0.65f)
                 .padding(10.dp)
         )
     }
@@ -186,12 +185,12 @@ fun ArticleCard(article: Article) {
     Dialog(
         onDismissRequest = { showPopup = false },
         properties = DialogProperties(
-            usePlatformDefaultWidth = false // Disable platform default width
+            usePlatformDefaultWidth = false
         )
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(.9f) // Set a fixed
+                .fillMaxWidth(.9f)
                 .padding(1.dp),
             shape = RoundedCornerShape(20.dp)
                 ){
@@ -208,7 +207,7 @@ fun ArticleCard(article: Article) {
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(200.dp) // Adjust height as needed
+                            .height(200.dp)
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -226,8 +225,7 @@ fun ArticleCard(article: Article) {
                                 .fillMaxWidth()
                                 .padding(8.dp),
                             text = article.description, // Heading
-                            fontSize = 28.sp, // Larger font size
-                            fontWeight = FontWeight.Bold, // Bold
+                            style = Typography.labelLarge,
                             textAlign = TextAlign.Center
                         )
 
@@ -238,7 +236,7 @@ fun ArticleCard(article: Article) {
                                 .fillMaxWidth()
                                 .padding(10.dp),
                             text = article.popupText, // Actual text
-                            fontSize = 14.sp, // Smaller font size
+                            style = Typography.bodyMedium,
                             textAlign = TextAlign.Center
                         )
 
