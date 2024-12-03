@@ -136,12 +136,6 @@ fun MainScreen() {
                         composable("info/frequently-asked-questions") {
                             FAQsPage()
                         }
-
-                        composable("info") { TODO() }
-                        composable("info/privacy-policy") { PrivacyPolicyPage() }
-                        composable("info/contact-us") { ContactUsPage() }
-                        composable("info/frequently-asked-questions") { FAQsPage() }
-                        composable("info/about-us") { AboutUsPage() }
                     }
                 }
             },
