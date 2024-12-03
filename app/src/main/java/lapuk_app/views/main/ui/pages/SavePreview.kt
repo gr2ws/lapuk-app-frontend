@@ -1,5 +1,6 @@
 package lapuk_app.views.main.ui.pages
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -40,6 +41,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -59,6 +61,7 @@ import lapuk_app.views.main.ui.theme.br5
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun SavePreviewDialog(
+    navController: NavController,
     imageBitmap: Bitmap, onDismiss: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
@@ -79,7 +82,8 @@ fun SavePreviewDialog(
                 // Launch requestAnalysis in a separate coroutine
                 val result = withContext(Dispatchers.IO) {
                     suspendCancellableCoroutine<AnalysisResults?> { continuation ->
-                        requestAnalysis(encodedString = encodeBitmap(imageBitmap),
+                        requestAnalysis(
+                            encodedString = encodeBitmap(imageBitmap),
                             callback = { result ->
                                 continuation.resume(result, null)
                             })
@@ -161,7 +165,7 @@ fun SavePreviewDialog(
                                 .fillMaxWidth()
                                 .padding(15.dp),
                             horizontalArrangement = Arrangement.SpaceAround
-                        ) {
+                        ) { // retake image
                             IconButton(modifier = Modifier
                                 .height(50.dp)
                                 .width(90.dp)
@@ -175,6 +179,7 @@ fun SavePreviewDialog(
                                 )
                             }
 
+                            // show detections, disabled if analysis failed
                             IconButton(modifier = Modifier
                                 .height(50.dp)
                                 .width(120.dp)
@@ -197,6 +202,7 @@ fun SavePreviewDialog(
                                 )
                             }
 
+                            // save image, disabled if analysis failed
                             IconButton(modifier = Modifier
                                 .height(50.dp)
                                 .width(90.dp)
@@ -211,6 +217,25 @@ fun SavePreviewDialog(
                                     shape = RoundedCornerShape(10.dp)
                                 ), enabled = isAnalysisSuccessful.value, onClick = {
                                 onDismiss(false)
+
+                                context.openFileOutput(
+                                    "detections_${listDetections.value.size}_${System.currentTimeMillis()}.png",
+                                    Context.MODE_PRIVATE
+                                ).use { stream ->
+                                    imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                                }
+
+                                Toast.makeText(
+                                    context, "Image saved.", Toast.LENGTH_SHORT
+                                ).show()
+
+                                navController.navigate("segregate") {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }) {
                                 Text(
                                     text = "Save",

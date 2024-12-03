@@ -67,7 +67,7 @@ fun TakeImagePage(navController: NavHostController) {
         }
     }
 
-    val pick =
+    @Suppress("DEPRECATION") val pick =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 imageDialog.value = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
@@ -76,7 +76,6 @@ fun TakeImagePage(navController: NavHostController) {
                 showDialog = false
             }
         }
-
 
     // Function to unbind camera use cases
     fun unbindCamera() {
@@ -215,9 +214,12 @@ fun TakeImagePage(navController: NavHostController) {
             }
 
             if (showDialog && imageDialog.value != null) {
-                SavePreviewDialog(imageBitmap = imageDialog.value!!, onDismiss = {
-                    showDialog = it
-                })
+                SavePreviewDialog(
+                    imageBitmap = imageDialog.value!!,
+                    navController = navController,
+                    onDismiss = {
+                        showDialog = it
+                    })
                 if (showDialog) rebindCamera()
             }
 
