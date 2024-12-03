@@ -35,10 +35,6 @@ import lapuk_app.views.main.ui.theme.br5
 // TODO: save to local storage after previewing and prompting
 // TODO: read from local storage, count, and show as list with previews
 
-// TODO: make backend to classify/detect image
-// TODO: send image (ask if sure) (show error if no internet, no server)
-// TODO: receive and show
-
 @Composable
 fun SegregatePage(navController: NavController) {
     val itemCount = 0

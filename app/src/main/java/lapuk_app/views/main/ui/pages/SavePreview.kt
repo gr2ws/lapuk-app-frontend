@@ -79,8 +79,7 @@ fun SavePreviewDialog(
                 // Launch requestAnalysis in a separate coroutine
                 val result = withContext(Dispatchers.IO) {
                     suspendCancellableCoroutine<AnalysisResults?> { continuation ->
-                        requestAnalysis(
-                            encodedString = encodeBitmap(imageBitmap),
+                        requestAnalysis(encodedString = encodeBitmap(imageBitmap),
                             callback = { result ->
                                 continuation.resume(result, null)
                             })
@@ -101,10 +100,12 @@ fun SavePreviewDialog(
             }
         } catch (e: Exception) {
             // Handle errors
-            Toast.makeText(
-                context, "Image Analysis Error: ${e.message}", Toast.LENGTH_SHORT
-            ).show()
 
+            if (e.message?.contains("coroutine", ignoreCase = true) == false) {
+                Toast.makeText(
+                    context, "Image Analysis Error: ${e.message}", Toast.LENGTH_SHORT
+                ).show()
+            }
             isLoading.value = false
             isAnalysisSuccessful.value = false
 
@@ -138,19 +139,21 @@ fun SavePreviewDialog(
                     shape = RoundedCornerShape(15.dp)
                 ) {
                     Column {
-                        imageResult.value?.let { bitmap ->
-                            Image(
-                                bitmap.asImageBitmap(),
-                                contentDescription = "Captured Image",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(15.dp)
-                                    .fillMaxHeight(.8f),
-                                contentScale = ContentScale.Fit
-                            )
+                        Box {
+                            imageResult.value?.let { bitmap ->
+                                Image(
+                                    bitmap.asImageBitmap(),
+                                    contentDescription = "Captured Image",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(15.dp)
+                                        .fillMaxHeight(.8f),
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
                         }
                         Text(
-                            "Save this classification?",
+                            if (isAnalysisSuccessful.value) "Save this classification?" else "Analysis failed. Retake image.",
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                         Row(
