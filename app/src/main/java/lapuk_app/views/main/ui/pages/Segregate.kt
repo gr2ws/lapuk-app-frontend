@@ -1,5 +1,6 @@
 package lapuk_app.views.main.ui.pages
 
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -22,6 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -29,23 +35,24 @@ import com.example.lapuk_app.R
 import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br4
 import lapuk_app.views.main.ui.theme.br5
+import java.io.File
 
 // * TODO: make image capture work
 // * TODO: callback function for image to main scaffold to pass to preview/prompt
-// TODO: save to local storage after previewing and prompting
-// TODO: read from local storage, count, and show as list with previews
-
-// TODO: make backend to classify/detect image
-// TODO: send image (ask if sure) (show error if no internet, no server)
-// TODO: receive and show
+// * TODO: save to local storage after previewing and prompting
+// * TODO: read from local storage, count, and show as list with previews
 
 @Composable
 fun SegregatePage(navController: NavController) {
-    val itemCount = 0
+    val context = LocalContext.current
+
+    val imageFiles = context.filesDir.listFiles { file -> file.extension == "png" } ?: emptyArray()
+    val itemCount = imageFiles.size
+
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
             items(itemCount) { index ->
-                ColumnItem(index)
+                ColumnItem(imageFiles[index])
             }
             item {
                 Row {
@@ -96,14 +103,18 @@ fun SegregatePage(navController: NavController) {
     }
 }
 
-@Composable // TODO: refactor to card
-fun ColumnItem(index: Int) {
-    Box(
+@Composable
+fun ColumnItem(file: File) {
+
+    fun readImageBitmap(file: File): ImageBitmap {
+        return BitmapFactory.decodeFile(file.absolutePath).asImageBitmap()
+    }
+
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .shadow(0.5.dp),
-        contentAlignment = Alignment.Center
+            .shadow(0.5.dp)
     ) {
         Box(modifier = Modifier.clickable { TODO("Open image") }) {
             Row(
@@ -113,21 +124,22 @@ fun ColumnItem(index: Int) {
                     .padding(horizontal = 17.dp, vertical = 12.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.logo_w_name),
-                    contentDescription = "logo",
+                    bitmap = readImageBitmap(file),
+                    contentDescription = "image preview",
                     modifier = Modifier
                         .size(80.dp)
                         .align(Alignment.CenterVertically),
-                    alignment = Alignment.CenterStart
+                    alignment = Alignment.CenterStart,
+                    contentScale = ContentScale.Crop
                 )
                 Text(
-                    text = "Item $index"
+                    text = file.name
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 IconButton(modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .height(90.dp)
-                    .width(70.dp), onClick = { TODO("Delete image") }) {
+                    .width(70.dp), onClick = { file.delete() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.delete),
                         contentDescription = "delete image",

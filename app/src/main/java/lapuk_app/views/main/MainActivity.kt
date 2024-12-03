@@ -21,6 +21,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import lapuk_app.views.main.ui.elements.BottomBar
 import lapuk_app.views.main.ui.elements.TopBar
+import lapuk_app.views.main.ui.pages.AboutUsPage
+import lapuk_app.views.main.ui.pages.ArticlesPage
 import lapuk_app.views.main.ui.pages.ContactUsPage
 import lapuk_app.views.main.ui.pages.FAQsPage
 import lapuk_app.views.main.ui.pages.PrivacyPolicyPage
@@ -83,15 +85,15 @@ fun MainScreen() {
                         composable("segregate") { SegregatePage(navController) }
                         composable("segregate/take-image") { TakeImagePage(navController) }
 
-                        composable("articles") { TODO() }
+                        composable("articles") { ArticlesPage() }
 
                         composable("heatmap") { TODO() }
 
                         composable("info") { TODO() }
                         composable("info/privacy-policy") { PrivacyPolicyPage() }
                         composable("info/contact-us") { ContactUsPage() }
-                        composable("info/about-us") { TODO() }
                         composable("info/frequently-asked-questions") { FAQsPage() }
+                        composable("info/about-us") { AboutUsPage() }
                     }
                 }
             },
