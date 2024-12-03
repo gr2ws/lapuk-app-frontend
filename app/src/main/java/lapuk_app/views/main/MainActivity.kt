@@ -29,6 +29,7 @@ import lapuk_app.views.main.ui.elements.BottomBar
 import lapuk_app.views.main.ui.elements.SpeechBubble
 import lapuk_app.views.main.ui.elements.TopBar
 import lapuk_app.views.main.ui.pages.AboutUsPage
+import lapuk_app.views.main.ui.pages.ArticlesPage
 import lapuk_app.views.main.ui.pages.ContactUsPage
 import lapuk_app.views.main.ui.pages.FAQsPage
 import lapuk_app.views.main.ui.pages.HomePage
@@ -107,7 +108,7 @@ fun MainScreen() {
                             TakeImagePage(navController)
                         }
 
-                        composable("articles") { TODO() }
+                        composable("articles") { ArticlesPage() }
 
                         composable("heatmap") { TODO() }
 

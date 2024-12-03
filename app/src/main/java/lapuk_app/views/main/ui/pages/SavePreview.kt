@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -37,15 +40,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
+import lapuk_app.views.main.AnalysisResults
 import lapuk_app.views.main.decodeToBitmap
 import lapuk_app.views.main.encodeBitmap
 import lapuk_app.views.main.requestAnalysis
+import lapuk_app.views.main.ui.theme.Typography
 import lapuk_app.views.main.ui.theme.br1
+import lapuk_app.views.main.ui.theme.br2
 import lapuk_app.views.main.ui.theme.br3
+import lapuk_app.views.main.ui.theme.br4
 import lapuk_app.views.main.ui.theme.br5
-import java.util.concurrent.CountDownLatch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
@@ -53,93 +62,160 @@ fun SavePreviewDialog(
     imageBitmap: Bitmap, onDismiss: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
-    val loadingLatch = CountDownLatch(1)
+
+    // result values
+    val analysisResults = remember { mutableStateOf<AnalysisResults?>(null) }
     val imageResult = remember { mutableStateOf<Bitmap?>(imageBitmap) }
+    val listDetections = remember { mutableStateOf<List<Pair<String, Float>>>(emptyList()) }
+
+    // flags
     val isLoading = remember { mutableStateOf(true) }
+    val isAnalysisSuccessful = remember { mutableStateOf(false) }
+    val showDetectionsDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         try {
-            withTimeout(30000) { // throws error if not finished in half minute
-                requestAnalysis(encodedString = encodeBitmap(imageBitmap), callback = { result ->
-                    imageResult.value = decodeToBitmap(result)
-                    isLoading.value = false
-                })
+            withTimeoutOrNull(30000) {
+                // Launch requestAnalysis in a separate coroutine
+                val result = withContext(Dispatchers.IO) {
+                    suspendCancellableCoroutine<AnalysisResults?> { continuation ->
+                        requestAnalysis(
+                            encodedString = encodeBitmap(imageBitmap),
+                            callback = { result ->
+                                continuation.resume(result, null)
+                            })
+                    }
+                }
+
+                // Process the result if not null
+                if (result != null) {
+                    analysisResults.value = result
+                    imageResult.value = decodeToBitmap(analysisResults.value!!.image)
+                    listDetections.value = analysisResults.value!!.detections
+                    isAnalysisSuccessful.value = true
+                }
+            } ?: run {
+                isLoading.value = false
+                isAnalysisSuccessful.value = false
+                throw Exception("Unable to receive results after 30 seconds.")
             }
-        } catch (e: Exception) { // show error message, if any. reset imageResult to original image
+        } catch (e: Exception) {
+            // Handle errors
             Toast.makeText(
                 context, "Image Analysis Error: ${e.message}", Toast.LENGTH_SHORT
             ).show()
+
             isLoading.value = false
+            isAnalysisSuccessful.value = false
+
             imageResult.value = imageBitmap
+        } finally {
+            isLoading.value = false // Ensure loading state is reset
         }
     }
 
-    if (isLoading.value) LoadingDialog(onDismiss = {
-        loadingLatch.countDown() // Cancel the image analysis
-        onDismiss(false)
-        Toast.makeText(
-            context, "Image Analysis Cancelled.", Toast.LENGTH_SHORT
-        ).show()
-    })
+    if (isLoading.value) {
+        LoadingDialog(onDismiss = {
+            onDismiss(false)
+            Toast.makeText(
+                context, "Image Analysis Cancelled.", Toast.LENGTH_SHORT
+            ).show()
+        })
+    }
 
-    if (!isLoading.value) Dialog(onDismissRequest = { onDismiss(false) }) {
-        Card(
-            modifier = Modifier
-                .fillMaxHeight(.73f)
-                .requiredWidth(400.dp)
-                .padding(20.dp),
-            colors = CardDefaults.cardColors(containerColor = br1),
-            shape = RoundedCornerShape(15.dp)
-        ) {
-            Column {
-                Image(
-                    imageResult.value!!.asImageBitmap(),
-                    contentDescription = "Captured Image",
+    if (!isLoading.value) {
+        if (showDetectionsDialog.value) {
+            DetectionsDialog(detections = listDetections.value,
+                onDismiss = { showDetectionsDialog.value = false })
+        } else {
+            Dialog(onDismissRequest = { onDismiss(false) }) {
+                Card(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(.8f)
-                        .padding(15.dp),
-                    contentScale = ContentScale.Fit
-                )
-
-                Text(
-                    "Save this classification?",
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(15.dp),
-                    horizontalArrangement = Arrangement.SpaceAround
+                        .fillMaxHeight(.73f)
+                        .requiredWidth(400.dp)
+                        .padding(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = br1),
+                    shape = RoundedCornerShape(15.dp)
                 ) {
-                    // Retake button
-                    IconButton(modifier = Modifier
-                        .height(50.dp)
-                        .width(100.dp)
-                        .border(2.dp, br5, shape = RoundedCornerShape(10.dp))
-                        .shadow(2.dp, shape = RoundedCornerShape(10.dp))
-                        .background(br3, shape = RoundedCornerShape(10.dp)), onClick = {
-
-                        onDismiss(false)
-                    }) {
+                    Column {
+                        imageResult.value?.let { bitmap ->
+                            Image(
+                                bitmap.asImageBitmap(),
+                                contentDescription = "Captured Image",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(15.dp)
+                                    .fillMaxHeight(.8f),
+                                contentScale = ContentScale.Fit
+                            )
+                        }
                         Text(
-                            text = "Retake", modifier = Modifier.padding(3.dp)
+                            "Save this classification?",
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
-                    }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(15.dp),
+                            horizontalArrangement = Arrangement.SpaceAround
+                        ) {
+                            IconButton(modifier = Modifier
+                                .height(50.dp)
+                                .width(90.dp)
+                                .border(2.dp, br5, shape = RoundedCornerShape(10.dp))
+                                .shadow(2.dp, shape = RoundedCornerShape(10.dp))
+                                .background(br3, shape = RoundedCornerShape(10.dp)), onClick = {
+                                onDismiss(false)
+                            }) {
+                                Text(
+                                    text = "Retake", modifier = Modifier.padding(3.dp)
+                                )
+                            }
 
-                    // Save button
-                    IconButton(modifier = Modifier
-                        .height(50.dp)
-                        .width(100.dp)
-                        .border(2.dp, br5, shape = RoundedCornerShape(10.dp))
-                        .shadow(2.dp, shape = RoundedCornerShape(10.dp))
-                        .background(br3, shape = RoundedCornerShape(10.dp)), onClick = {
+                            IconButton(modifier = Modifier
+                                .height(50.dp)
+                                .width(120.dp)
+                                .border(
+                                    2.dp,
+                                    if (isAnalysisSuccessful.value) br5 else br4,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                                .shadow(2.dp, shape = RoundedCornerShape(10.dp))
+                                .background(
+                                    if (isAnalysisSuccessful.value) br3 else br2,
+                                    shape = RoundedCornerShape(10.dp)
+                                ), enabled = isAnalysisSuccessful.value, onClick = {
+                                showDetectionsDialog.value = true
+                            }) {
+                                Text(
+                                    text = "Detections",
+                                    modifier = Modifier.padding(3.dp),
+                                    color = if (isAnalysisSuccessful.value) Color.Black else br5
+                                )
+                            }
 
-                        onDismiss(false)
-                    }) {
-                        Text(
-                            text = "Save", modifier = Modifier.padding(3.dp)
-                        )
+                            IconButton(modifier = Modifier
+                                .height(50.dp)
+                                .width(90.dp)
+                                .border(
+                                    2.dp,
+                                    if (isAnalysisSuccessful.value) br5 else br4,
+                                    shape = RoundedCornerShape(10.dp)
+                                )
+                                .shadow(2.dp, shape = RoundedCornerShape(10.dp))
+                                .background(
+                                    if (isAnalysisSuccessful.value) br3 else br2,
+                                    shape = RoundedCornerShape(10.dp)
+                                ), enabled = isAnalysisSuccessful.value, onClick = {
+                                onDismiss(false)
+                            }) {
+                                Text(
+                                    text = "Save",
+                                    modifier = Modifier.padding(3.dp),
+                                    color = if (isAnalysisSuccessful.value) Color.Black else br5
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -171,6 +247,58 @@ fun LoadingDialog(onDismiss: () -> Unit) {
                     color = Color.White,
                     textAlign = TextAlign.Center
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun DetectionsDialog(detections: List<Pair<String, Float>>, onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxHeight(.73f)
+                .requiredWidth(400.dp)
+                .padding(20.dp),
+            colors = CardDefaults.cardColors(containerColor = br1),
+            shape = RoundedCornerShape(15.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp)
+            ) {
+                Column(Modifier.fillMaxSize()) {
+                    var numItems = 1
+                    Text("Detections", style = Typography.titleSmall)
+                    LazyColumn {
+                        if (detections.isEmpty()) item {
+                            Text(
+                                text = "No waste items detected.", modifier = Modifier.padding(5.dp)
+                            )
+                        } else items(detections) { detection ->
+                            Text(
+                                text = "Item $numItems: ${detection.first.replaceFirstChar { it.uppercase() }}: ${(detection.second * 100).toInt()}% confidence.",
+                                modifier = Modifier.padding(5.dp)
+                            )
+                            numItems++
+                        }
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        modifier = Modifier
+                            .height(50.dp)
+                            .width(90.dp)
+                            .border(2.dp, br5, shape = RoundedCornerShape(10.dp))
+                            .shadow(2.dp, shape = RoundedCornerShape(10.dp))
+                            .background(br3, shape = RoundedCornerShape(10.dp))
+                            .align(Alignment.End), onClick = onDismiss
+                    ) {
+                        Text(
+                            text = "Back", modifier = Modifier.padding(3.dp)
+                        )
+                    }
+                }
             }
         }
     }

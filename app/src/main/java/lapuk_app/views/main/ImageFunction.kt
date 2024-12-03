@@ -20,6 +20,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.google.gson.Gson
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -110,14 +111,23 @@ fun takePhoto(
         })
 }
 
+data class ResultsReceived(
+    val image: String,
+    val detections: List<List<Any>>
+)
+
+data class AnalysisResults(
+    val image: String,
+    val detections: List<Pair<String, Float>>
+)
 /**
  * Sends a request to analyze the given Base64 encoded string.
  *
  * @param encodedString The Base64 encoded string to be analyzed.
  * @return The result of the analysis as a string.
  */
-fun requestAnalysis(encodedString: String, callback: (String) -> Unit) {
-    val request = Request.Builder().url("http://127.0.0.1:5000").post(
+fun requestAnalysis(encodedString: String, callback: (AnalysisResults) -> Unit) {
+    val request = Request.Builder().url("http://10.8.130.186:5000/detect").post(
         encodedString.toRequestBody("text/plain".toMediaTypeOrNull())
     ).build()
 
@@ -126,7 +136,6 @@ fun requestAnalysis(encodedString: String, callback: (String) -> Unit) {
     OkHttpClient().newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
             Log.e("Request", "Request failed: $e")
-            callback("e")
         }
 
         override fun onResponse(call: Call, response: Response) {
@@ -135,16 +144,26 @@ fun requestAnalysis(encodedString: String, callback: (String) -> Unit) {
 
                 Thread.sleep(100) // artificial delay to stop errors in emulator
 
-                val result = response.body?.string() ?: "Error: No response received."
+                val responseReceived = response.body?.string() ?: "Error: No response received."
+                val analysisReceived = Gson().fromJson(responseReceived, ResultsReceived::class.java)
+                val mappedPairs = analysisReceived.detections.map { it.toTuple() }
 
-                Log.d("Request", "Result received: $result.")
+                val analysisResults = AnalysisResults(analysisReceived.image, mappedPairs)
 
-                callback(result)
+                Log.d("Request", "Result received: $responseReceived, ${analysisResults.detections}")
+
+                callback(analysisResults)
             } else {
                 Log.e("Request", "Request failed: ${response.code}")
             }
         }
     })
+}
+
+// Extension function to convert list to tuple
+fun List<Any>.toTuple(): Pair<String, Float> {
+    if (this.size != 2) throw IllegalArgumentException("List size is not 2")
+    return Pair(this[0].toString(), this[1].toString().toFloat())
 }
 
 /**
