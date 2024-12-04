@@ -2,7 +2,6 @@
 
 package lapuk_app.views.main.ui.pages
 
-import android.graphics.Paint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,10 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -37,7 +34,6 @@ import com.example.lapuk_app.R
 import lapuk_app.views.main.ui.elements.BottomBar
 import lapuk_app.views.main.ui.theme.Typography
 import lapuk_app.views.main.ui.theme.br2
-import lapuk_app.views.main.ui.theme.br4
 import lapuk_app.views.main.ui.theme.br6
 
 data class NavigationItem(
@@ -46,14 +42,14 @@ data class NavigationItem(
     val route: String,
 ) { /* ... */ }
 
-@Preview(
+/*@Preview(
     showBackground = true, device = "spec:width=1080px,height=2400px,dpi=440,navigation=buttons"
-)
+)*/
 @Composable
-fun HomePage(/*navController: NavController*/) {
+fun HomePage(navController: NavController) {
 
     val selectedIndex = remember { mutableStateOf(0) }
-    var isExpanded = remember { mutableStateOf(false) }
+    val isExpanded = remember { mutableStateOf(false) }
     val firstRow = listOf(
         NavigationItem(
             "Segregate",
@@ -145,7 +141,7 @@ fun HomePage(/*navController: NavController*/) {
                                 .background(br2)
                                 .border(width = 1.dp, color = br6, shape = shape)
                                 .clickable {
-                                    //navController.navigate(navigationItem.route)
+                                    navController.navigate(navigationItem.route)
                                     selectedIndex.value = index
                                 },
                             contentAlignment = Alignment.Center
@@ -179,6 +175,7 @@ fun HomePage(/*navController: NavController*/) {
 
         // buttons row 2
 
+
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,
@@ -202,7 +199,7 @@ fun HomePage(/*navController: NavController*/) {
                                 .background(br2)
                                 .border(width = 1.dp, color = br6, shape = shape)
                                 .clickable {
-                                    //navController.navigate(navigationItem.route)
+                                    navController.navigate(navigationItem.route)
                                     selectedIndex.value = 3
                                 },
                             contentAlignment = Alignment.Center
@@ -231,7 +228,6 @@ fun HomePage(/*navController: NavController*/) {
                 }
             }
 
-            //BottomBar(navController = navController, pageClicked = selectedIndex.value)
         }
 
         // Spacer to push content upwards and give space for the bottom content
@@ -250,7 +246,7 @@ fun HomePage(/*navController: NavController*/) {
                     painter = painterResource(id = R.drawable.circle_help),
                     contentDescription = "help",
                     modifier = Modifier
-                        .size(24.dp)  // Adjust the size of the icon as needed
+                        .size(24.dp)
                 )
             }
         } else if (isExpanded.value) {

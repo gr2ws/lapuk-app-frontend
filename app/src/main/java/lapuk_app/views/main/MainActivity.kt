@@ -94,7 +94,7 @@ fun MainScreen() {
                         composable("home") {
                             lastNavigatedRoute = "home"
                             indexOfLastPageAccessed = 0
-                            HomePage(/*navController*/)
+                            HomePage(navController)
                         }
 
                         composable("segregate") {
