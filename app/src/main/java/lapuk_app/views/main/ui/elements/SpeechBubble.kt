@@ -38,7 +38,7 @@ data class Item (
     val route: String
 ) {/*...*/}
 
-//@Preview
+//@Preview//
 @Composable
 fun SpeechBubble(lastRoute : String, onOptionClick: (String) -> Unit) {
 

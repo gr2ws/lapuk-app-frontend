@@ -88,7 +88,7 @@ fun PrivacyPolicyPage() {
             )
         }
 
-        // navigation
+        // navigation //
         Box(
             modifier = Modifier.padding(vertical = 18.dp), contentAlignment = Alignment.Center
         ) {
