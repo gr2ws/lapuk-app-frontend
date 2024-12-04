@@ -32,6 +32,7 @@ import lapuk_app.views.main.ui.pages.AboutUsPage
 import lapuk_app.views.main.ui.pages.ArticlesPage
 import lapuk_app.views.main.ui.pages.ContactUsPage
 import lapuk_app.views.main.ui.pages.FAQsPage
+import lapuk_app.views.main.ui.pages.HeatmapsPage
 import lapuk_app.views.main.ui.pages.HomePage
 import lapuk_app.views.main.ui.pages.PrivacyPolicyPage
 import lapuk_app.views.main.ui.pages.SegregatePage
@@ -114,7 +115,11 @@ fun MainScreen() {
                             ArticlesPage()
                         }
 
-                        composable("heatmap") { TODO() }
+                        composable("heatmap") {
+                            lastNavigatedRoute = "heatmap"
+                            indexOfLastPageAccessed = 3
+                            HeatmapsPage()
+                        }
 
                         composable("info") {
                             CallSpeechBubble(lastNavigatedRoute) { option ->
