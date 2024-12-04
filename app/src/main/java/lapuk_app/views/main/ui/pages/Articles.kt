@@ -147,109 +147,113 @@ fun ArticleCard(article: Article) {
     val uriHandler = LocalUriHandler.current
 
     Card(
-    modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 8.dp)
-        .clickable { showPopup = true },
-    shape = RoundedCornerShape(15.dp),
-    colors = CardDefaults.cardColors(containerColor = Color.White)
-) {
-    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(90.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(vertical = 8.dp)
+            .clickable { showPopup = true },
+        shape = RoundedCornerShape(15.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Image(
-            painter = painterResource(id = article.imageResource),
-            contentDescription = "Image",
-            contentScale = ContentScale.Crop,
+        Row(
             modifier = Modifier
-                .fillMaxWidth() // Fill the available width
-                .wrapContentHeight() // Set a fixed height (adjust as needed)
-                .weight(0.40f) // Occupy 37% of the width
-                .clip(RectangleShape) // Clip to a rectangle to prevent image overflow
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = article.description,
-            fontSize = 10.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .weight(0.65f) // Occupy 60% of the width
-                .padding(10.dp)
-        )
+                .fillMaxWidth()
+                .height(90.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(id = article.imageResource),
+                contentDescription = "Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth() // Fill the available width
+                    .wrapContentHeight() // Set a fixed height (adjust as needed)
+                    .weight(0.40f) // Occupy 37% of the width
+                    .clip(RectangleShape) // Clip to a rectangle to prevent image overflow
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = article.description,
+                fontSize = 10.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .weight(0.65f) // Occupy 60% of the width
+                    .padding(10.dp)
+            )
+        }
     }
-}
 
     if (showPopup) {
-    Dialog(
-        onDismissRequest = { showPopup = false },
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false // Disable platform default width
-        )
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(.9f) // Set a fixed
-                .padding(1.dp),
-            shape = RoundedCornerShape(20.dp)
-                ){
-                Column(
+        Dialog(
+            onDismissRequest = { showPopup = false },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false // Disable platform default width
+            )
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(.9f) // Set a fixed
+                    .padding(1.dp),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(650.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Image(
-                        painter = painterResource(id = article.imageResource),
-                        contentDescription = "Image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp) // Adjust height as needed
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
+                    item {
+                        Image(
+                            painter = painterResource(id = article.imageResource),
+                            contentDescription = "Image",
+                            contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp),
-                            text = article.description, // Heading
-                            fontSize = 28.sp, // Larger font size
-                            fontWeight = FontWeight.Bold, // Bold
-                            textAlign = TextAlign.Center
+                                .height(200.dp) // Adjust height as needed
                         )
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                        Text(
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(10.dp),
-                            text = article.popupText, // Actual text
-                            fontSize = 14.sp, // Smaller font size
-                            textAlign = TextAlign.Center
-                        )
+                                .weight(1f)
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                text = article.description, // Heading
+                                fontSize = 28.sp, // Larger font size
+                                fontWeight = FontWeight.Bold, // Bold
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                            Spacer(modifier = Modifier.height(8.dp))
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp),
+                                text = article.popupText, // Actual text
+                                fontSize = 14.sp, // Smaller font size
+                                textAlign = TextAlign.Center
+                            )
 
-                        Button(onClick = { uriHandler.openUri(article.url) }, modifier = Modifier.padding(8.dp) .width(200.dp)) {
-                            Text("Open Article in Browser", fontSize = 12.sp)
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Button(
+                                onClick = { uriHandler.openUri(article.url) },
+                                modifier = Modifier.padding(8.dp).width(200.dp)
+                            ) {
+                                Text("Open Article in Browser", fontSize = 12.sp)
+                            }
                         }
                     }
                 }
             }
         }
     }
-}
