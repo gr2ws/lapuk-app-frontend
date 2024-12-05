@@ -2,6 +2,7 @@ package lapuk_app.views.main.ui.pages
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.icu.text.SimpleDateFormat
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,7 +42,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -57,12 +57,13 @@ import lapuk_app.views.main.ui.theme.br2
 import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br4
 import lapuk_app.views.main.ui.theme.br5
+import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun SavePreviewDialog(
-    navController: NavController,
-    imageBitmap: Bitmap, onDismiss: (Boolean) -> Unit
+    imageBitmap: Bitmap,
+    onDismiss: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -219,7 +220,15 @@ fun SavePreviewDialog(
                                 onDismiss(false)
 
                                 context.openFileOutput(
-                                    "detections_${listDetections.value.size}_${System.currentTimeMillis()}.png",
+                                    "${listDetections.value.size} items, " +
+                                            "${
+                                                SimpleDateFormat(
+                                                    "MM:dd:yy, HH:mm",
+                                                    java.util.Locale.getDefault()
+                                                ).format(
+                                                    Date()
+                                                )
+                                            }.png",
                                     Context.MODE_PRIVATE
                                 ).use { stream ->
                                     imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
@@ -229,13 +238,6 @@ fun SavePreviewDialog(
                                     context, "Image saved.", Toast.LENGTH_SHORT
                                 ).show()
 
-                                navController.navigate("segregate") {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
                             }) {
                                 Text(
                                     text = "Save",

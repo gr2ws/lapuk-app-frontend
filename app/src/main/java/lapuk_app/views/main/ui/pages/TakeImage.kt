@@ -93,7 +93,16 @@ fun TakeImagePage(navController: NavHostController) {
         if (hasPermission(context)) hasCameraPermission = true
         else { // if permission not granted, ask permission and check again
             getPermission(context)
-            if (hasPermission(context)) hasCameraPermission = true
+
+            if(hasPermission(context)) hasCameraPermission = true
+
+            navController.navigate("segregate/take-image") { // refresh page after giving permission
+                popUpTo(navController.graph.startDestinationId) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
         }
     }
 
@@ -214,9 +223,7 @@ fun TakeImagePage(navController: NavHostController) {
             }
 
             if (showDialog && imageDialog.value != null) {
-                SavePreviewDialog(
-                    imageBitmap = imageDialog.value!!,
-                    navController = navController,
+                SavePreviewDialog(imageBitmap = imageDialog.value!!,
                     onDismiss = {
                         showDialog = it
                     })
