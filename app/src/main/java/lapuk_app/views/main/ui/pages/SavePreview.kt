@@ -1,5 +1,6 @@
 package lapuk_app.views.main.ui.pages
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -40,6 +41,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -59,6 +61,7 @@ import lapuk_app.views.main.ui.theme.br5
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun SavePreviewDialog(
+    navController: NavController,
     imageBitmap: Bitmap, onDismiss: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
@@ -98,13 +101,16 @@ fun SavePreviewDialog(
                 isLoading.value = false
                 isAnalysisSuccessful.value = false
                 throw Exception("Unable to receive results after 30 seconds.")
+
             }
         } catch (e: Exception) {
             // Handle errors
-            Toast.makeText(
-                context, "Image Analysis Error: ${e.message}", Toast.LENGTH_SHORT
-            ).show()
 
+            if (e.message?.contains("coroutine", ignoreCase = true) == false) {
+                Toast.makeText(
+                    context, "Image Analysis Error: ${e.message}", Toast.LENGTH_SHORT
+                ).show()
+            }
             isLoading.value = false
             isAnalysisSuccessful.value = false
 
@@ -138,19 +144,21 @@ fun SavePreviewDialog(
                     shape = RoundedCornerShape(15.dp)
                 ) {
                     Column {
-                        imageResult.value?.let { bitmap ->
-                            Image(
-                                bitmap.asImageBitmap(),
-                                contentDescription = "Captured Image",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(15.dp)
-                                    .fillMaxHeight(.8f),
-                                contentScale = ContentScale.Fit
-                            )
+                        Box {
+                            imageResult.value?.let { bitmap ->
+                                Image(
+                                    bitmap.asImageBitmap(),
+                                    contentDescription = "Captured Image",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(15.dp)
+                                        .fillMaxHeight(.8f),
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
                         }
                         Text(
-                            "Save this classification?",
+                            if (isAnalysisSuccessful.value) "Save this classification?" else "Analysis failed. Retake image.",
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                         Row(
@@ -158,7 +166,7 @@ fun SavePreviewDialog(
                                 .fillMaxWidth()
                                 .padding(15.dp),
                             horizontalArrangement = Arrangement.SpaceAround
-                        ) {
+                        ) { // retake image
                             IconButton(modifier = Modifier
                                 .height(50.dp)
                                 .width(90.dp)
@@ -171,7 +179,7 @@ fun SavePreviewDialog(
                                     text = "Retake", modifier = Modifier.padding(3.dp)
                                 )
                             }
-
+                            // show detections, disabled if analysis failed
                             IconButton(modifier = Modifier
                                 .height(50.dp)
                                 .width(120.dp)
@@ -194,6 +202,7 @@ fun SavePreviewDialog(
                                 )
                             }
 
+                            // save image, disabled if analysis failed
                             IconButton(modifier = Modifier
                                 .height(50.dp)
                                 .width(90.dp)
@@ -208,6 +217,25 @@ fun SavePreviewDialog(
                                     shape = RoundedCornerShape(10.dp)
                                 ), enabled = isAnalysisSuccessful.value, onClick = {
                                 onDismiss(false)
+
+                                context.openFileOutput(
+                                    "detections_${listDetections.value.size}_${System.currentTimeMillis()}.png",
+                                    Context.MODE_PRIVATE
+                                ).use { stream ->
+                                    imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                                }
+
+                                Toast.makeText(
+                                    context, "Image saved.", Toast.LENGTH_SHORT
+                                ).show()
+
+                                navController.navigate("segregate") {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }) {
                                 Text(
                                     text = "Save",
