@@ -108,7 +108,7 @@ fun SavePreviewDialog(
 
             if (e.message?.contains("coroutine", ignoreCase = true) == false) {
                 Toast.makeText(
-                    context, "Image Analysis Error: ${e.message}", Toast.LENGTH_SHORT
+                    context, "Image analysis error: ${e.message}", Toast.LENGTH_SHORT
                 ).show()
             }
             isLoading.value = false
@@ -124,7 +124,7 @@ fun SavePreviewDialog(
         LoadingDialog(onDismiss = {
             onDismiss(false)
             Toast.makeText(
-                context, "Image Analysis Cancelled.", Toast.LENGTH_SHORT
+                context, "Image analysis cancelled.", Toast.LENGTH_SHORT
             ).show()
         })
     }

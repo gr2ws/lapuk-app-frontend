@@ -90,7 +90,7 @@ fun SegregatePage(navController: NavController) {
         ) {
             IconButton(modifier = Modifier
                 .size(70.dp)
-                .border(4.dp, br5, shape = RoundedCornerShape(20.dp))
+                .border(3.dp, br5, shape = RoundedCornerShape(20.dp))
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
                 .background(br3, shape = RoundedCornerShape(20.dp)), onClick = {
                 navController.navigate("segregate/take-image") {
@@ -102,7 +102,7 @@ fun SegregatePage(navController: NavController) {
                 }
             }) {
                 Icon(
-                    modifier = Modifier.fillMaxSize(.85f),
+                    modifier = Modifier.fillMaxSize(.7f),
                     painter = painterResource(id = R.drawable.add),
                     contentDescription = "add image",
                     tint = br5

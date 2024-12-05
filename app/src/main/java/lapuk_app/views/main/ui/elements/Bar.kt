@@ -85,7 +85,6 @@ fun BottomBar(navController: NavController, pageClicked : Int) {
         containerColor = br1,
     ) {
         items.forEachIndexed { index, item ->
-
             NavigationBarItem(icon = {
                 Icon(icons[index], contentDescription = item)
             },
