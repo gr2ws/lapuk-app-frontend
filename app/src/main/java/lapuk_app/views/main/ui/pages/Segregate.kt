@@ -124,14 +124,6 @@ fun ColumnItem(file: File, metadata: File, navController: NavController) {
         return BitmapFactory.decodeFile(file.absolutePath).asImageBitmap()
     }
 
-    fun loadDetections(file: File): List<Pair<String, Float>> {
-        // Load detections from a file or any other source
-        // This is a placeholder implementation
-        return listOf(
-            "Item 1" to 0.95f, "Item 2" to 0.85f
-        )
-    }
-
     fun readMetadata(file: File): String {
         return file.readText()
     }
@@ -145,7 +137,6 @@ fun ColumnItem(file: File, metadata: File, navController: NavController) {
         colors = CardDefaults.cardColors(containerColor = br1)
     ) {
         Box(modifier = Modifier.clickable {
-            listDetections.value = loadDetections(file)
             showPreviewDialog.value = true
         }) {
             Row(
