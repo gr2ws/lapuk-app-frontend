@@ -298,11 +298,12 @@ fun ColumnItem(file: File, metadata: File, navController: NavController) {
             text = {
                 LazyColumn(modifier= Modifier.fillMaxSize()) {
                     val detectionsList = metadataContent.value.split(",").map { it.trim() }
+
                     items(detectionsList) { item ->
                         Text(
                             text = item,
                             modifier = Modifier.padding(10.dp),
-                            style = Typography.bodyMedium
+                            style = Typography.bodyLarge
                         )
                     }
                 }

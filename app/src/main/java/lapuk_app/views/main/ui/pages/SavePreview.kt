@@ -82,7 +82,8 @@ fun SavePreviewDialog(
                 // Launch requestAnalysis in a separate coroutine
                 val result = withContext(Dispatchers.IO) {
                     suspendCancellableCoroutine<AnalysisResults?> { continuation ->
-                        requestAnalysis(encodedString = encodeBitmap(imageBitmap),
+                        requestAnalysis(
+                            encodedString = encodeBitmap(imageBitmap),
                             callback = { result ->
                                 continuation.resume(result, null)
                             })
@@ -238,9 +239,11 @@ fun SavePreviewDialog(
                                     "$fileName.txt", Context.MODE_APPEND
                                 ).use { stream ->
                                     var num = 1
-                                    listDetections.value.forEach {
+
+                                    if (listDetections.value.isEmpty()) stream.write("No waste items detected.".toByteArray())
+                                    else listDetections.value.forEach {
                                         stream.write(
-                                            "Item $num: ${it.first.replaceFirstChar{ letter -> letter.uppercase() }}: ${(it.second * 100).toInt()}% confidence.,".toByteArray()
+                                            "Item $num: ${it.first.replaceFirstChar { letter -> letter.uppercase() }}: ${(it.second * 100).toInt()}% confidence.,".toByteArray()
                                         )
                                         num++
                                     }
