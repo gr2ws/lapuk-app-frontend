@@ -223,7 +223,7 @@ fun SavePreviewDialog(
                                     "${listDetections.value.size} items, " +
                                             "${
                                                 SimpleDateFormat(
-                                                    "MM:dd:yy, HH:mm",
+                                                    "MM:dd:yy, HH:mm:ss",
                                                     java.util.Locale.getDefault()
                                                 ).format(
                                                     Date()
@@ -231,7 +231,8 @@ fun SavePreviewDialog(
                                             }.png",
                                     Context.MODE_PRIVATE
                                 ).use { stream ->
-                                    imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                                    imageResult.value?.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                                        ?: imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
                                 }
 
                                 Toast.makeText(

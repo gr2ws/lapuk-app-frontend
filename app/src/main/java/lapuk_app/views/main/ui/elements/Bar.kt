@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.lapuk_app.R
 import lapuk_app.views.main.ui.theme.LapukTheme
+import lapuk_app.views.main.ui.theme.Typography
 import lapuk_app.views.main.ui.theme.br1
 import lapuk_app.views.main.ui.theme.br5
 
@@ -88,7 +89,7 @@ fun BottomBar(navController: NavController, pageClicked : Int) {
             NavigationBarItem(icon = {
                 Icon(icons[index], contentDescription = item)
             },
-                label = { Text(item) },
+                label = { Text(item , style = Typography.bodySmall )},
                 selected = selectedItem == index,
                 onClick = {
                     selectedItem = index

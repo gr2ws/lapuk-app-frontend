@@ -72,12 +72,12 @@ val Typography = Typography(
         letterSpacing = 0.sp
     ),
 
-//    labelMedium = TextStyle(
-//        fontFamily = FontFamily.SansSerif,
-//        fontWeight = FontWeight.Bold,
-//        fontSize = 20.sp,
-//        letterSpacing = 0.sp
-//    ),
+    labelMedium = TextStyle(
+        fontFamily = Nunito,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp,
+        letterSpacing = 0.sp
+    ),
 
     labelSmall = TextStyle(
         fontFamily = Nunito,
