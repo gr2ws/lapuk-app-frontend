@@ -32,6 +32,7 @@ import lapuk_app.views.main.ui.pages.AboutUsPage
 import lapuk_app.views.main.ui.pages.ArticlesPage
 import lapuk_app.views.main.ui.pages.ContactUsPage
 import lapuk_app.views.main.ui.pages.FAQsPage
+import lapuk_app.views.main.ui.pages.HomePage
 import lapuk_app.views.main.ui.pages.PrivacyPolicyPage
 import lapuk_app.views.main.ui.pages.SegregatePage
 import lapuk_app.views.main.ui.pages.TakeImagePage
@@ -66,7 +67,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
-    var lastNavigatedRoute by remember { mutableStateOf("info/about-us") }
+    var lastNavigatedRoute by remember { mutableStateOf("home") }
+    var indexOfLastPageAccessed = 0
 
     LapukTheme {
         Scaffold(
@@ -86,15 +88,31 @@ fun MainScreen() {
                 ) {
                     NavHost(
                         navController = navController,
-                        startDestination = "segregate",
+                        startDestination = "home",
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        composable("home") { TODO() }
+                        composable("home") {
+                            lastNavigatedRoute = "home"
+                            indexOfLastPageAccessed = 0
+                            HomePage(navController)
+                        }
 
-                        composable("segregate") { SegregatePage(navController) }
-                        composable("segregate/take-image") { TakeImagePage(navController) }
+                        composable("segregate") {
+                            lastNavigatedRoute = "segregate"
+                            indexOfLastPageAccessed = 1
+                            SegregatePage(navController)
+                        }
+                        composable("segregate/take-image") {
+                            lastNavigatedRoute = "segregate/take-image"
+                            indexOfLastPageAccessed = 1
+                            TakeImagePage(navController)
+                        }
 
-                        composable("articles") { ArticlesPage() }
+                        composable("articles") {
+                            lastNavigatedRoute = "articles"
+                            indexOfLastPageAccessed = 2
+                            ArticlesPage()
+                        }
 
                         composable("heatmap") { TODO() }
 
@@ -102,46 +120,57 @@ fun MainScreen() {
                             CallSpeechBubble(lastNavigatedRoute) { option ->
                                 when (option) {
                                     "FAQs" -> {
-                                        lastNavigatedRoute = "info/frequently-asked-questions"
                                         navController.navigate("info/frequently-asked-questions")
+                                        indexOfLastPageAccessed = 4
                                     }
 
                                     "About Us" -> {
-                                        lastNavigatedRoute = "info/about-us"
                                         navController.navigate("info/about-us")
+                                        indexOfLastPageAccessed = 4
                                     }
 
                                     "Contact Us" -> {
                                         lastNavigatedRoute = "info/contact-us"
                                         navController.navigate("info/contact-us")
+                                        indexOfLastPageAccessed = 4
                                     }
 
                                     "Privacy Policy" -> {
                                         lastNavigatedRoute = "info/privacy-policy"
                                         navController.navigate("info/privacy-policy")
+                                        indexOfLastPageAccessed = 4
                                     }
                                 }
                             }
                         }
 
-                        composable("info/privacy-policy") {
-                            PrivacyPolicyPage()
+                        composable("info/frequently-asked-questions") {
+                            lastNavigatedRoute = "info/frequently-asked-questions"
+                            FAQsPage()
+                            indexOfLastPageAccessed = 4
                         }
                         composable("info/contact-us") {
+                            lastNavigatedRoute = "info/contact-us"
                             ContactUsPage()
+                            indexOfLastPageAccessed = 4
                         }
                         composable("info/about-us") {
+                            lastNavigatedRoute = "info/about-us"
                             AboutUsPage()
+                            indexOfLastPageAccessed = 4
                         }
-                        composable("info/frequently-asked-questions") {
-                            FAQsPage()
+                        composable("info/privacy-policy") {
+                            lastNavigatedRoute = "info/privacy-policy"
+                            PrivacyPolicyPage()
+                            indexOfLastPageAccessed = 4
                         }
                     }
                 }
             },
 
             bottomBar = {
-                BottomBar(navController)
+                if (lastNavigatedRoute != "home")
+                    BottomBar(navController, indexOfLastPageAccessed)
             })
     }
 }

@@ -135,7 +135,7 @@ fun AboutUsPage() {
             ) {
 
                 var currentPage by remember { mutableIntStateOf(0) }
-                val swipeThreshold = 80f // Adjust this value to control sensitivity
+                val swipeThreshold = 88f // Adjust this value to control sensitivity //
                 val currentPerson = people[currentPage]
 
                 Row(

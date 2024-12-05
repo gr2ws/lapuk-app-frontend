@@ -163,9 +163,7 @@ fun requestAnalysis(encodedString: String, callback: (AnalysisResults) -> Unit) 
 
                 val analysisResults = AnalysisResults(analysisReceived.image, mappedPairs)
 
-                Log.d(
-                    "Request", "Result received: $responseReceived, ${analysisResults.detections}"
-                )
+                Log.d("Request", "Result received: $responseReceived, ${analysisResults.detections}")
 
                 callback(analysisResults)
             } else {
@@ -174,6 +172,7 @@ fun requestAnalysis(encodedString: String, callback: (AnalysisResults) -> Unit) 
         }
     })
 }
+
 
 /**
  * Converts a list of any type to a pair of string and float.

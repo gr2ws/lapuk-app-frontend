@@ -49,7 +49,7 @@ fun ContactUsPage(){
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally) {
 
-        //title
+        // title //
         Box(
             modifier = Modifier
                 .padding(vertical = 32.dp)
@@ -62,7 +62,7 @@ fun ContactUsPage(){
             )
         }
 
-        //body
+        // body //
         Box(
             modifier = Modifier
                 .padding(vertical = 20.dp, horizontal = 34.dp)
@@ -78,7 +78,8 @@ fun ContactUsPage(){
         }
 
         val context = LocalContext.current
-        //button
+
+        // button //
         Box(
             modifier = Modifier
                 .padding(vertical = 24.dp, horizontal = 12.dp)

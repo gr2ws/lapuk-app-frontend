@@ -3,6 +3,13 @@ package lapuk_app.views.main.ui.pages
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +49,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.lapuk_app.R
+import lapuk_app.views.main.ui.theme.Typography
+
+data class Article(
+    val imageResource: Int,
+    val description: String,
+    val popupText: String,
+    val url: String
+) 
 
 @Composable
 fun ArticlesPage() {
@@ -52,7 +67,7 @@ fun ArticlesPage() {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("ARTICLES", fontSize = 58.sp, modifier = Modifier.padding(top = 48.dp))
+        Text("ARTICLES", style = Typography.titleMedium, modifier = Modifier.padding(top = 48.dp))
         Text(
             "Exposure to landfill areas pose risks to your health. Stay informed with these health articles from the internet:",
             fontSize = 14.sp,
@@ -111,6 +126,7 @@ fun ArticleList() {
             "Landfills are the antithesis of sustainability., the article decrees. It also discusses the waste containments of landfill sites (~40%) and its effects on millions of people worldwide. It further mentions how landfills pose threats to the climate, to biodiversity, land value, and so on.\n",
             "https://www.activesustainability.com/environment/landfills-serious-problem-environment/?fbclid=IwZXh0bgNhZW0CMTEAAR1gkawjmEw4FbeNibuDXWP4a7B80QqusVd9dYKnkr_bIZGy0qsOfv-TgKY_aem_54wYDs-QDV6sLbiRcrHsfQ"
         ), Article(
+
             R.drawable.img7,
             "Health and Environmental Risks of Residents Living Close to a Landfill: A Case Study of Thohoyandou Landfill",
             "This study investigates the impacts of landfill proximity on the environment and the well-being of residents within 100–2000m from the site, and finds that 78% reported severe air contamination and health issues. The report also explores options to mitigate these concerns.",
@@ -139,64 +155,61 @@ fun ArticleList() {
     }
 }
 
-
-data class Article(
-    val imageResource: Int, val description: String, val popupText: String, val url: String
-)
-
-
 @Composable
 fun ArticleCard(article: Article) {
     var showPopup by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
 
     Card(
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 8.dp)
+        .clickable { showPopup = true },
+    shape = RoundedCornerShape(15.dp),
+    colors = CardDefaults.cardColors(containerColor = Color.White)
+) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable { showPopup = true },
-        shape = RoundedCornerShape(15.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+            .height(90.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
+        Image(
+            painter = painterResource(id = article.imageResource),
+            contentDescription = "Image",
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(90.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(id = article.imageResource),
-                contentDescription = "Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth() // Fill the available width
-                    .wrapContentHeight() // Set a fixed height (adjust as needed)
-                    .weight(0.40f) // Occupy 37% of the width
-                    .clip(RectangleShape) // Clip to a rectangle to prevent image overflow
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = article.description,
-                fontSize = 10.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .weight(0.65f) // Occupy 60% of the width
-                    .padding(10.dp)
-            )
-        }
+                .wrapContentHeight()
+                .weight(0.40f)
+                .clip(RectangleShape)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = article.description,
+            style = Typography.bodySmall,
+            lineHeight = 14.sp * 1.15,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .weight(0.65f)
+                .padding(10.dp)
+        )
     }
+}
 
     if (showPopup) {
-        Dialog(
-            onDismissRequest = { showPopup = false }, properties = DialogProperties(
-                usePlatformDefaultWidth = false // Disable platform default width
-            )
-        ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth(.9f) // Set a fixed
-                    .padding(1.dp), shape = RoundedCornerShape(20.dp)
-            ) {
+    Dialog(
+        onDismissRequest = { showPopup = false },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(.9f)
+                .padding(1.dp),
+            shape = RoundedCornerShape(20.dp)
+                ){
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -210,7 +223,8 @@ fun ArticleCard(article: Article) {
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(200.dp) // Adjust height as needed
+                            .height(200.dp)
+
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -228,8 +242,7 @@ fun ArticleCard(article: Article) {
                                 .fillMaxWidth()
                                 .padding(8.dp),
                             text = article.description, // Heading
-                            fontSize = 28.sp, // Larger font size
-                            fontWeight = FontWeight.Bold, // Bold
+                            style = Typography.labelLarge,
                             textAlign = TextAlign.Center
                         )
 
@@ -240,18 +253,13 @@ fun ArticleCard(article: Article) {
                                 .fillMaxWidth()
                                 .padding(10.dp),
                             text = article.popupText, // Actual text
-                            fontSize = 14.sp, // Smaller font size
+                            style = Typography.bodyMedium,
                             textAlign = TextAlign.Center
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Button(
-                            onClick = { uriHandler.openUri(article.url) },
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .width(200.dp)
-                        ) {
+                        Button(onClick = { uriHandler.openUri(article.url) }, modifier = Modifier.padding(8.dp) .width(200.dp)) {
                             Text("Open Article in Browser", fontSize = 12.sp)
                         }
                     }

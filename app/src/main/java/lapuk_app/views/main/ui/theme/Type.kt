@@ -17,21 +17,6 @@ val Nunito = FontFamily(
 
 val Typography = Typography(
 
-
-    /*       SUMMARY OF SPACINGS        */
-    //======= (all units in .sp) =======//
-    /* Body (L) --> 16, double          */
-    /* Body (M) --> 14, x1.8            */
-    /* Body (S) --> 12, x1.8            */
-    //=====    =====     =====     =====//
-    /* Title (L) = 60, 28sp LH (bold)   */
-    /* Title (M) = 48, 28sp LH (bold)   */
-    /* Title (S) = 36, 1.5x (bold)      */
-    //=====    =====     =====     =====//
-    /* Label (L) --> 24 (bold)          */
-    /* Label (M) --> 20 (bold)          */ // [currently unusable; breaks bottom navbar]
-    /* Label (S) --> 16 (bold)          */
-
     bodyLarge = TextStyle(
         fontFamily = Nunito,
         fontWeight = FontWeight.Normal,

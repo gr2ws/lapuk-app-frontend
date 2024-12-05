@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.androidx.camera.view)
     implementation(libs.okhttp)
     implementation(libs.androidx.graphics.shapes.android)
+    implementation(libs.androidx.storage)
+    implementation(libs.androidx.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -70,7 +72,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.gson)
-
-
 
 }

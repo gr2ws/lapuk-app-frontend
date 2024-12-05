@@ -101,6 +101,7 @@ fun SavePreviewDialog(
                 isLoading.value = false
                 isAnalysisSuccessful.value = false
                 throw Exception("Unable to receive results after 30 seconds.")
+
             }
         } catch (e: Exception) {
             // Handle errors
@@ -178,7 +179,6 @@ fun SavePreviewDialog(
                                     text = "Retake", modifier = Modifier.padding(3.dp)
                                 )
                             }
-
                             // show detections, disabled if analysis failed
                             IconButton(modifier = Modifier
                                 .height(50.dp)
