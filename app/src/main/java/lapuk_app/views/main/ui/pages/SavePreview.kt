@@ -62,8 +62,7 @@ import java.util.Date
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun SavePreviewDialog(
-    imageBitmap: Bitmap,
-    onDismiss: (Boolean) -> Unit
+    imageBitmap: Bitmap, onDismiss: (Boolean) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -83,8 +82,7 @@ fun SavePreviewDialog(
                 // Launch requestAnalysis in a separate coroutine
                 val result = withContext(Dispatchers.IO) {
                     suspendCancellableCoroutine<AnalysisResults?> { continuation ->
-                        requestAnalysis(
-                            encodedString = encodeBitmap(imageBitmap),
+                        requestAnalysis(encodedString = encodeBitmap(imageBitmap),
                             callback = { result ->
                                 continuation.resume(result, null)
                             })
@@ -218,21 +216,34 @@ fun SavePreviewDialog(
                                     shape = RoundedCornerShape(10.dp)
                                 ), enabled = isAnalysisSuccessful.value, onClick = {
                                 onDismiss(false)
+                                val fileName = "${listDetections.value.size} items, ${
+                                    SimpleDateFormat(
+                                        "MM:dd:yy, HH:mm:ss", java.util.Locale.getDefault()
+                                    ).format(Date())
+                                }"
 
+                                // save image
                                 context.openFileOutput(
-                                    "${listDetections.value.size} items, " +
-                                            "${
-                                                SimpleDateFormat(
-                                                    "MM:dd:yy, HH:mm:ss",
-                                                    java.util.Locale.getDefault()
-                                                ).format(
-                                                    Date()
-                                                )
-                                            }.png",
-                                    Context.MODE_PRIVATE
+                                    "$fileName.png", Context.MODE_PRIVATE
                                 ).use { stream ->
-                                    imageResult.value?.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                                        ?: imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                                    imageResult.value?.compress(
+                                        Bitmap.CompressFormat.PNG, 100, stream
+                                    ) ?: imageBitmap.compress(
+                                        Bitmap.CompressFormat.PNG, 100, stream
+                                    )
+                                }
+
+                                // Save detections as text
+                                context.openFileOutput(
+                                    "$fileName.txt", Context.MODE_APPEND
+                                ).use { stream ->
+                                    var num = 1
+                                    listDetections.value.forEach {
+                                        stream.write(
+                                            "Item $num: ${it.first.replaceFirstChar{ letter -> letter.uppercase() }}: ${(it.second * 100).toInt()}% confidence.,".toByteArray()
+                                        )
+                                        num++
+                                    }
                                 }
 
                                 Toast.makeText(

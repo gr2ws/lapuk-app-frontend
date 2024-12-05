@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -53,12 +54,14 @@ fun SegregatePage(navController: NavController) {
     val context = LocalContext.current
 
     val imageFiles = context.filesDir.listFiles { file -> file.extension == "png" } ?: emptyArray()
+    val metaDataFiles =
+        context.filesDir.listFiles { file -> file.extension == "txt" } ?: emptyArray()
     val itemCount = imageFiles.size
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
             items(itemCount) { index ->
-                ColumnItem(imageFiles[index], navController)
+                ColumnItem(imageFiles[index], metaDataFiles[index], navController)
             }
             item {
                 Row {
@@ -110,11 +113,27 @@ fun SegregatePage(navController: NavController) {
 }
 
 @Composable
-fun ColumnItem(file: File, navController: NavController) {
+fun ColumnItem(file: File, metadata: File, navController: NavController) {
     val showDeleteDialog = remember { mutableStateOf(false) }
+    val showPreviewDialog = remember { mutableStateOf(false) }
+    val showMetadataDialog = remember { mutableStateOf(false) }
+    val listDetections = remember { mutableStateOf<List<Pair<String, Float>>>(emptyList()) }
+    val metadataContent = remember { mutableStateOf("") }
 
     fun readImageBitmap(file: File): ImageBitmap {
         return BitmapFactory.decodeFile(file.absolutePath).asImageBitmap()
+    }
+
+    fun loadDetections(file: File): List<Pair<String, Float>> {
+        // Load detections from a file or any other source
+        // This is a placeholder implementation
+        return listOf(
+            "Item 1" to 0.95f, "Item 2" to 0.85f
+        )
+    }
+
+    fun readMetadata(file: File): String {
+        return file.readText()
     }
 
     Card(
@@ -125,7 +144,10 @@ fun ColumnItem(file: File, navController: NavController) {
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(containerColor = br1)
     ) {
-        Box(modifier = Modifier.clickable { TODO("Open image") }) {
+        Box(modifier = Modifier.clickable {
+            listDetections.value = loadDetections(file)
+            showPreviewDialog.value = true
+        }) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -180,14 +202,19 @@ fun ColumnItem(file: File, navController: NavController) {
                     verticalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    Image(
-                        bitmap = readImageBitmap(file),
-                        contentDescription = "image to delete",
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .fillMaxHeight(.8f),
-                        contentScale = ContentScale.Crop
-                    )
+                            .fillMaxHeight(.8f)
+                    ) {
+                        Image(
+                            bitmap = readImageBitmap(file),
+                            contentDescription = "image to delete",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
                     Text(
                         text = "Are you sure you want to delete this image?",
                         style = Typography.bodyLarge
@@ -196,6 +223,7 @@ fun ColumnItem(file: File, navController: NavController) {
             },
             confirmButton = {
                 TextButton(onClick = {
+                    metadata.delete()
                     file.delete()
                     navController.navigate("segregate") { // refresh page after image deletion
                         popUpTo(navController.graph.startDestinationId) {
@@ -212,6 +240,77 @@ fun ColumnItem(file: File, navController: NavController) {
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog.value = false }) {
                     Text("Cancel", style = Typography.labelMedium)
+                }
+            })
+    }
+
+    if (showPreviewDialog.value) {
+        AlertDialog(onDismissRequest = { showPreviewDialog.value = false },
+            containerColor = br1,
+            title = { Text(text = "Preview", style = Typography.labelLarge) },
+            modifier = Modifier
+                .fillMaxHeight(.73f)
+                .requiredWidth(400.dp)
+                .padding(20.dp),
+            shape = RoundedCornerShape(15.dp),
+            text = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                ) {
+                    Image(
+                        bitmap = readImageBitmap(file),
+                        contentDescription = "full view of image",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    metadataContent.value = readMetadata(metadata)
+                    showMetadataDialog.value = true
+                }) {
+                    Text("See Detections", style = Typography.labelMedium)
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showPreviewDialog.value = false }) {
+                    Text("Close", style = Typography.labelMedium)
+                }
+            })
+    }
+
+    if (showMetadataDialog.value) {
+        AlertDialog(onDismissRequest = {
+            showPreviewDialog.value = false
+            showMetadataDialog.value = false
+        },
+            containerColor = br1,
+            title = { Text(text = "Detections", style = Typography.labelLarge) },
+            modifier = Modifier
+                .fillMaxHeight(.73f)
+                .requiredWidth(400.dp)
+                .padding(20.dp),
+            shape = RoundedCornerShape(15.dp),
+            text = {
+                LazyColumn(modifier= Modifier.fillMaxSize()) {
+                    val detectionsList = metadataContent.value.split(",").map { it.trim() }
+                    items(detectionsList) { item ->
+                        Text(
+                            text = item,
+                            modifier = Modifier.padding(10.dp),
+                            style = Typography.bodyMedium
+                        )
+                    }
+                }
+
+            },
+            confirmButton = {
+                TextButton(onClick = { showMetadataDialog.value = false }) {
+                    Text("Back", style = Typography.labelMedium)
                 }
             })
     }
