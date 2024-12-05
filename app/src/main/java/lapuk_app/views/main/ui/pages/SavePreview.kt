@@ -144,15 +144,16 @@ fun SavePreviewDialog(
                     shape = RoundedCornerShape(15.dp)
                 ) {
                     Column {
-                        Box {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(15.dp)
+                                .fillMaxHeight(.8f)
+                        ) {
                             imageResult.value?.let { bitmap ->
                                 Image(
                                     bitmap.asImageBitmap(),
                                     contentDescription = "Captured Image",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(15.dp)
-                                        .fillMaxHeight(.8f),
                                     contentScale = ContentScale.Fit
                                 )
                             }
@@ -217,7 +218,7 @@ fun SavePreviewDialog(
                                     shape = RoundedCornerShape(10.dp)
                                 ), enabled = isAnalysisSuccessful.value, onClick = {
                                 onDismiss(false)
-                                val fileName = "${listDetections.value.size} items, ${
+                                val fileName = "${listDetections.value.size}; ${
                                     SimpleDateFormat(
                                         "MM:dd:yy, HH:mm:ss", java.util.Locale.getDefault()
                                     ).format(Date())

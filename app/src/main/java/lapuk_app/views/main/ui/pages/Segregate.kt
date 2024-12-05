@@ -7,7 +7,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -62,6 +61,7 @@ fun SegregatePage(navController: NavController) {
         LazyColumn {
             items(itemCount) { index ->
                 ColumnItem(imageFiles[index], metaDataFiles[index], navController)
+                Spacer(modifier = Modifier.height(1.dp))
             }
             item {
                 Row {
@@ -114,10 +114,11 @@ fun SegregatePage(navController: NavController) {
 
 @Composable
 fun ColumnItem(file: File, metadata: File, navController: NavController) {
+    //flags
     val showDeleteDialog = remember { mutableStateOf(false) }
     val showPreviewDialog = remember { mutableStateOf(false) }
     val showMetadataDialog = remember { mutableStateOf(false) }
-    val listDetections = remember { mutableStateOf<List<Pair<String, Float>>>(emptyList()) }
+
     val metadataContent = remember { mutableStateOf("") }
 
     fun readImageBitmap(file: File): ImageBitmap {
@@ -132,7 +133,7 @@ fun ColumnItem(file: File, metadata: File, navController: NavController) {
         modifier = Modifier
             .fillMaxWidth()
             .height(100.dp)
-            .shadow(0.5.dp, shape = RoundedCornerShape(10.dp)),
+            .shadow(1.5.dp, shape = RoundedCornerShape(10.dp)),
         shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(containerColor = br1)
     ) {
@@ -183,34 +184,17 @@ fun ColumnItem(file: File, metadata: File, navController: NavController) {
         AlertDialog(onDismissRequest = { showDeleteDialog.value = false },
             containerColor = br1,
             modifier = Modifier
-                .fillMaxHeight(.73f)
                 .requiredWidth(400.dp)
                 .padding(20.dp),
             shape = RoundedCornerShape(15.dp),
             title = { Text(text = "Delete Image", style = Typography.labelLarge) },
             text = {
-                Column(
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(.8f)
-                    ) {
-                        Image(
-                            bitmap = readImageBitmap(file),
-                            contentDescription = "image to delete",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
 
                     Text(
-                        text = "Are you sure you want to delete this image?",
+                        text = "Are you sure you want to delete ${file.name}?",
                         style = Typography.bodyLarge
                     )
-                }
+
             },
             confirmButton = {
                 TextButton(onClick = {
@@ -238,7 +222,7 @@ fun ColumnItem(file: File, metadata: File, navController: NavController) {
     if (showPreviewDialog.value) {
         AlertDialog(onDismissRequest = { showPreviewDialog.value = false },
             containerColor = br1,
-            title = { Text(text = "Preview", style = Typography.labelLarge) },
+            title = { Text(text = "Image", style = Typography.labelLarge) },
             modifier = Modifier
                 .fillMaxHeight(.73f)
                 .requiredWidth(400.dp)
