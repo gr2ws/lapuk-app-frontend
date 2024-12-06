@@ -28,6 +28,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="tiramisu">
 
+
         <activity
             android:name="lapuk_app.views.main.MainActivity"
             android:exported="true"

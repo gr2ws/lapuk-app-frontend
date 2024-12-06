@@ -1,8 +1,9 @@
 package lapuk_app.views.main.ui.pages
 
+import android.content.Context
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,12 +24,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle.Companion.Italic
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import lapuk_app.views.main.repository.HeatmapRepository
 import lapuk_app.views.main.ui.theme.Typography
-import lapuk_app.views.main.ui.theme.br4
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -77,15 +78,30 @@ fun HeatmapsPage() {
             )
         }
 
-        Spacer(modifier = Modifier.height(64.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
-        //TableauView
+        /* description */
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 36.dp),
+                text = "Dataset is sourced from philatlas.com",
+                style = Typography.bodyMedium.copy(fontStyle = Italic),
+                textAlign = TextAlign.Center,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(36.dp))
+
+        // Heatmap View
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 48.dp)
-                .size(264.dp, 264.dp)
-                .background(br4)
+                .padding(horizontal = 24.dp),
+            contentAlignment = Alignment.Center
         ) {
             HeatmapScreen()
         }
@@ -94,36 +110,52 @@ fun HeatmapsPage() {
 
 @Composable
 fun HeatmapScreen() {
+    val context = LocalContext.current // Provides the current Android context
     var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     val repository = HeatmapRepository()
 
     LaunchedEffect(Unit) {
-        /*fetchHeatmap(repository = repository) { bitmap ->
+        fetchHeatmap(context = context, repository = repository) { bitmap ->
             imageBitmap = bitmap
-        }*/
+        }
     }
 
     imageBitmap?.let {
         Image(bitmap = it, contentDescription = "Heatmap")
     } ?: run {
-        // Show loading spinner if imageBitmap is not available yet
         CircularProgressIndicator()
     }
 }
 
-@Composable
-fun fetchHeatmap(repository: HeatmapRepository, onSuccess: (ImageBitmap) -> Unit) {
+
+fun fetchHeatmap(
+    context: Context,
+    repository: HeatmapRepository,
+    onSuccess: (ImageBitmap) -> Unit
+) {
     repository.getHeatmap().enqueue(object : Callback<ResponseBody> {
         override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
             if (response.isSuccessful) {
+                // Log the response to confirm the image is received
+                Log.d("API Response", "Image received, size: ${response.body()?.contentLength()} bytes")
+
+                // Get the image as a byte stream and decode it
                 val inputStream = response.body()?.byteStream()
                 val bitmap = BitmapFactory.decodeStream(inputStream)
-                onSuccess(bitmap.asImageBitmap())
+                if (bitmap != null) {
+                    onSuccess(bitmap.asImageBitmap()) // Return the bitmap to the UI
+                } else {
+                    Log.e("API Error", "Failed to decode the image")
+                }
+            } else {
+                Log.e("API Error", "Failed to fetch heatmap: ${response.code()}")
             }
         }
 
         override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-            // Handle failure (e.g., show error message)
+            // Handle network failure
+            Log.e("Network Error", "Error fetching heatmap image", t)
         }
     })
 }
+
