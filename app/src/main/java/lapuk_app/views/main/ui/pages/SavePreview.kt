@@ -1,6 +1,8 @@
 package lapuk_app.views.main.ui.pages
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.icu.text.SimpleDateFormat
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -55,6 +57,7 @@ import lapuk_app.views.main.ui.theme.br2
 import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br4
 import lapuk_app.views.main.ui.theme.br5
+import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
@@ -98,13 +101,16 @@ fun SavePreviewDialog(
                 isLoading.value = false
                 isAnalysisSuccessful.value = false
                 throw Exception("Unable to receive results after 30 seconds.")
+
             }
         } catch (e: Exception) {
             // Handle errors
-            Toast.makeText(
-                context, "Image Analysis Error: ${e.message}", Toast.LENGTH_SHORT
-            ).show()
 
+            if (e.message?.contains("coroutine", ignoreCase = true) == false) {
+                Toast.makeText(
+                    context, "Image analysis error: ${e.message}", Toast.LENGTH_SHORT
+                ).show()
+            }
             isLoading.value = false
             isAnalysisSuccessful.value = false
 
@@ -118,7 +124,7 @@ fun SavePreviewDialog(
         LoadingDialog(onDismiss = {
             onDismiss(false)
             Toast.makeText(
-                context, "Image Analysis Cancelled.", Toast.LENGTH_SHORT
+                context, "Image analysis cancelled.", Toast.LENGTH_SHORT
             ).show()
         })
     }
@@ -138,19 +144,22 @@ fun SavePreviewDialog(
                     shape = RoundedCornerShape(15.dp)
                 ) {
                     Column {
-                        imageResult.value?.let { bitmap ->
-                            Image(
-                                bitmap.asImageBitmap(),
-                                contentDescription = "Captured Image",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(15.dp)
-                                    .fillMaxHeight(.8f),
-                                contentScale = ContentScale.Fit
-                            )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(15.dp)
+                                .fillMaxHeight(.8f)
+                        ) {
+                            imageResult.value?.let { bitmap ->
+                                Image(
+                                    bitmap.asImageBitmap(),
+                                    contentDescription = "Captured Image",
+                                    contentScale = ContentScale.Fit
+                                )
+                            }
                         }
                         Text(
-                            "Save this classification?",
+                            if (isAnalysisSuccessful.value) "Save this classification?" else "Analysis failed. Retake image.",
                             modifier = Modifier.align(Alignment.CenterHorizontally)
                         )
                         Row(
@@ -158,7 +167,7 @@ fun SavePreviewDialog(
                                 .fillMaxWidth()
                                 .padding(15.dp),
                             horizontalArrangement = Arrangement.SpaceAround
-                        ) {
+                        ) { // retake image
                             IconButton(modifier = Modifier
                                 .height(50.dp)
                                 .width(90.dp)
@@ -171,7 +180,7 @@ fun SavePreviewDialog(
                                     text = "Retake", modifier = Modifier.padding(3.dp)
                                 )
                             }
-
+                            // show detections, disabled if analysis failed
                             IconButton(modifier = Modifier
                                 .height(50.dp)
                                 .width(120.dp)
@@ -194,6 +203,7 @@ fun SavePreviewDialog(
                                 )
                             }
 
+                            // save image, disabled if analysis failed
                             IconButton(modifier = Modifier
                                 .height(50.dp)
                                 .width(90.dp)
@@ -208,6 +218,42 @@ fun SavePreviewDialog(
                                     shape = RoundedCornerShape(10.dp)
                                 ), enabled = isAnalysisSuccessful.value, onClick = {
                                 onDismiss(false)
+                                val fileName = "${listDetections.value.size}; ${
+                                    SimpleDateFormat(
+                                        "MM:dd:yy, HH:mm:ss", java.util.Locale.getDefault()
+                                    ).format(Date())
+                                }"
+
+                                // save image
+                                context.openFileOutput(
+                                    "$fileName.png", Context.MODE_PRIVATE
+                                ).use { stream ->
+                                    imageResult.value?.compress(
+                                        Bitmap.CompressFormat.PNG, 100, stream
+                                    ) ?: imageBitmap.compress(
+                                        Bitmap.CompressFormat.PNG, 100, stream
+                                    )
+                                }
+
+                                // Save detections as text
+                                context.openFileOutput(
+                                    "$fileName.txt", Context.MODE_APPEND
+                                ).use { stream ->
+                                    var num = 1
+
+                                    if (listDetections.value.isEmpty()) stream.write("No waste items detected.".toByteArray())
+                                    else listDetections.value.forEach {
+                                        stream.write(
+                                            "Item $num: ${it.first.replaceFirstChar { letter -> letter.uppercase() }}: ${(it.second * 100).toInt()}% confidence.,".toByteArray()
+                                        )
+                                        num++
+                                    }
+                                }
+
+                                Toast.makeText(
+                                    context, "Image saved.", Toast.LENGTH_SHORT
+                                ).show()
+
                             }) {
                                 Text(
                                     text = "Save",

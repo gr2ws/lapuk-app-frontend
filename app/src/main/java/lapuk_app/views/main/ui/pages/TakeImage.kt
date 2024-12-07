@@ -1,6 +1,11 @@
 package lapuk_app.views.main.ui.pages
 
 import android.graphics.Bitmap
+import android.provider.MediaStore
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.background
@@ -8,6 +13,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,8 +44,11 @@ import lapuk_app.views.main.ShowCameraView
 import lapuk_app.views.main.getPermission
 import lapuk_app.views.main.hasPermission
 import lapuk_app.views.main.takePhoto
+import lapuk_app.views.main.ui.theme.br2
 import lapuk_app.views.main.ui.theme.br3
+import lapuk_app.views.main.ui.theme.br4
 import lapuk_app.views.main.ui.theme.br5
+
 
 /**
  * Composable function that displays the Take Image Page.
@@ -55,14 +64,28 @@ fun TakeImagePage(navController: NavHostController) {
     val imageDialog = remember { mutableStateOf<Bitmap?>(null) }
 
     val context = LocalContext.current
+
     val controller = remember {
         LifecycleCameraController(context).apply {
             setEnabledUseCases(CameraController.IMAGE_CAPTURE)
         }
     }
 
+    val metaDataFiles =
+        context.filesDir.listFiles { file -> file.extension == "txt" } ?: emptyArray()
+
+    @Suppress("DEPRECATION") val pick =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                imageDialog.value = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+                showDialog = true
+            } else {
+                showDialog = false
+            }
+        }
+
     // Function to unbind camera use cases
-    fun unbindCamera(){
+    fun unbindCamera() {
         controller.unbind()
     }
 
@@ -77,7 +100,16 @@ fun TakeImagePage(navController: NavHostController) {
         if (hasPermission(context)) hasCameraPermission = true
         else { // if permission not granted, ask permission and check again
             getPermission(context)
+
             if (hasPermission(context)) hasCameraPermission = true
+
+            navController.navigate("segregate/take-image") { // refresh page after giving permission
+                popUpTo(navController.graph.startDestinationId) {
+                    saveState = true
+                }
+                launchSingleTop = true
+                restoreState = true
+            }
         }
     }
 
@@ -108,9 +140,10 @@ fun TakeImagePage(navController: NavHostController) {
             // Back icon button
             IconButton(modifier = Modifier
                 .size(70.dp)
-                .border(4.dp, br5, shape = RoundedCornerShape(20.dp))
+                .border(3.dp, br5, shape = RoundedCornerShape(20.dp))
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
                 .background(br3, shape = RoundedCornerShape(20.dp)), onClick = {
+                unbindCamera()
                 navController.navigate("segregate") {
                     popUpTo(navController.graph.startDestinationId) {
                         saveState = true
@@ -120,12 +153,14 @@ fun TakeImagePage(navController: NavHostController) {
                 }
             }) {
                 Icon(
-                    modifier = Modifier.fillMaxSize(.85f),
+                    modifier = Modifier.fillMaxSize(.45f),
                     painter = painterResource(id = R.drawable.arrow_left),
                     contentDescription = "return to segregate page",
                     tint = br5
                 )
             }
+
+            Spacer(modifier = Modifier.size(20.dp))
 
             // Instruction text
             Text(
@@ -160,7 +195,7 @@ fun TakeImagePage(navController: NavHostController) {
             // Capture image button
             IconButton(modifier = Modifier
                 .size(80.dp)
-                .border(4.5.dp, br5, shape = RoundedCornerShape(20.dp))
+                .border(3.dp, br5, shape = RoundedCornerShape(20.dp))
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
                 .background(br3, shape = RoundedCornerShape(20.dp))
                 .align(alignment = Alignment.Center), onClick = {
@@ -171,7 +206,7 @@ fun TakeImagePage(navController: NavHostController) {
                 }
             }) {
                 Icon(
-                    modifier = Modifier.fillMaxSize(.63f),
+                    modifier = Modifier.fillMaxSize(.45f),
                     painter = painterResource(id = R.drawable.camera),
                     contentDescription = "capture image",
                     tint = br5
@@ -181,23 +216,55 @@ fun TakeImagePage(navController: NavHostController) {
             // Upload image button
             IconButton(modifier = Modifier
                 .size(65.dp)
-                .border(4.dp, br5, shape = RoundedCornerShape(20.dp))
+                .border(3.dp, br5, shape = RoundedCornerShape(20.dp))
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
                 .background(br3, shape = RoundedCornerShape(20.dp))
                 .align(Alignment.CenterEnd),
-                onClick = { TODO("upload image from gallery") }) {
+                onClick = {
+                    pick.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                }) {
                 Icon(
-                    modifier = Modifier.fillMaxSize(.55f),
+                    modifier = Modifier.fillMaxSize(.4f),
                     painter = painterResource(id = R.drawable.upload),
                     contentDescription = "upload image from gallery",
                     tint = br5
                 )
             }
 
+            // statistics page button
+            IconButton(modifier = Modifier
+                .size(65.dp)
+                .border(
+                    3.dp,
+                    if (metaDataFiles.isEmpty()) br4 else br5,
+                    shape = RoundedCornerShape(20.dp)
+                )
+                .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
+                .background(
+                    if (metaDataFiles.isEmpty()) br2 else br3,
+                    shape = RoundedCornerShape(20.dp)
+                )
+                .align(Alignment.CenterStart),
+                onClick = {
+                    if (metaDataFiles.isNotEmpty()) {
+                        TODO("Add statistics page")
+                    } else {
+                        Toast.makeText(context, "No data available.", Toast.LENGTH_SHORT).show()
+                    }
+                }) {
+                Icon(
+                    modifier = Modifier.fillMaxSize(.4f),
+                    painter = painterResource(id = R.drawable.stats),
+                    contentDescription = "upload image from gallery",
+                    tint = if (metaDataFiles.isEmpty()) br4 else br5
+                )
+            }
+
             if (showDialog && imageDialog.value != null) {
-                SavePreviewDialog(imageBitmap = imageDialog.value!!, onDismiss = {
-                    showDialog = it
-                })
+                SavePreviewDialog(imageBitmap = imageDialog.value!!,
+                    onDismiss = {
+                        showDialog = it
+                    })
                 if (showDialog) rebindCamera()
             }
 
