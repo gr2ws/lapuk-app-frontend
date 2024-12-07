@@ -45,11 +45,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Lock orientation globally to portrait
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         Thread.sleep(2000)
-
         installSplashScreen().apply {
             setOnExitAnimationListener { splashScreenView ->
                 // Call remove() when animation is finished to remove splash screen

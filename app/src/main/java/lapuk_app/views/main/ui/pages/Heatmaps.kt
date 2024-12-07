@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle.Companion.Italic
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +43,7 @@ import retrofit2.Response
 )
 @Composable
 fun HeatmapsPage() {
+
     //column
     Column(
         modifier = Modifier
@@ -80,7 +83,7 @@ fun HeatmapsPage() {
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        /* description */
+        /* citation */
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
@@ -110,9 +113,16 @@ fun HeatmapsPage() {
 
 @Composable
 fun HeatmapScreen() {
-    val context = LocalContext.current // Provides the current Android context
+    val context = LocalContext.current
     var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     val repository = HeatmapRepository()
+
+    // Define state for zoom and translation (panning)
+    val scale by remember { mutableStateOf(1.5f) } // Increased scale for zoom-in
+    val offsetX by remember { mutableStateOf(0f) }
+    val offsetY by remember { mutableStateOf(0f) }
+
+    // Container size for heatmap
 
     LaunchedEffect(Unit) {
         fetchHeatmap(context = context, repository = repository) { bitmap ->
@@ -120,8 +130,24 @@ fun HeatmapScreen() {
         }
     }
 
-    imageBitmap?.let {
-        Image(bitmap = it, contentDescription = "Heatmap")
+    imageBitmap?.let { bitmap ->
+        Box(
+            modifier = Modifier
+                .size(200.dp, 200.dp)
+        ) {
+            Image(
+                bitmap = bitmap,
+                contentDescription = "Heatmap",
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .graphicsLayer(
+                        scaleX = scale,
+                        scaleY = scale,
+                        translationX = offsetX,
+                        translationY = offsetY
+                    )
+            )
+        }
     } ?: run {
         CircularProgressIndicator()
     }
