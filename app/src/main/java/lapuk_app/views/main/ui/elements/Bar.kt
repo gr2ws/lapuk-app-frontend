@@ -13,10 +13,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.lapuk_app.R
 import lapuk_app.views.main.ui.theme.LapukTheme
+import lapuk_app.views.main.ui.theme.Typography
 import lapuk_app.views.main.ui.theme.br1
 import lapuk_app.views.main.ui.theme.br5
 
@@ -63,7 +60,6 @@ fun TopBar() {
  */
 @Composable
 fun BottomBar(navController: NavController, pageClicked : Int) {
-    val selectedItemState = remember { mutableIntStateOf(pageClicked) }
     var selectedItem = pageClicked
 
     val items = listOf(
@@ -89,11 +85,10 @@ fun BottomBar(navController: NavController, pageClicked : Int) {
         containerColor = br1,
     ) {
         items.forEachIndexed { index, item ->
-
             NavigationBarItem(icon = {
                 Icon(icons[index], contentDescription = item)
             },
-                label = { Text(item) },
+                label = { Text(item , style = Typography.bodySmall )},
                 selected = selectedItem == index,
                 onClick = {
                     selectedItem = index
