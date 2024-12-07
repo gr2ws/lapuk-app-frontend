@@ -96,8 +96,7 @@ fun SavePreviewDialog(
                 // Launch requestAnalysis in a separate coroutine
                 val result = withContext(Dispatchers.IO) {
                     suspendCancellableCoroutine<AnalysisResults?> { continuation ->
-                        requestAnalysis(
-                            encodedString = encodeBitmap(imageBitmap),
+                        requestAnalysis(encodedString = encodeBitmap(imageBitmap),
                             callback = { result ->
                                 continuation.resume(result, null)
                             })
@@ -265,6 +264,62 @@ fun SavePreviewDialog(
                                 }
 
                                 // read stats file
+                                if (listDetections.value.isNotEmpty()) {
+                                    try { // try reading file
+                                        val stats =
+                                            context.openFileInput("stats.txt").bufferedReader()
+                                                .use { file ->
+                                                    file.readText().split(";").map { it.toInt() }
+                                                }
+
+                                        val updatedStats = stats.toMutableList()
+                                        listDetections.value.forEach { detection ->
+                                            val index = detectionNames.indexOf(detection.first)
+                                            if (index != -1) {
+                                                updatedStats[index] += 1
+                                            }
+                                        }
+
+                                        context.openFileOutput(
+                                            "stats.txt",
+                                            Context.MODE_PRIVATE
+                                        ).use { stream ->
+                                            updatedStats.forEach { stat ->
+                                                stream.write("$stat;".toByteArray())
+                                            }
+                                        }
+                                    } catch (e: Exception) {
+                                        context.openFileOutput(
+                                            "stats.txt",
+                                            Context.MODE_PRIVATE
+                                        ).use { stream ->
+                                            stream.write("0;0;0;0;0;0;0;0;0;0".toByteArray())
+                                        } // Create stats.txt if it does not exist
+
+                                        val stats =
+                                            context.openFileInput("stats.txt").bufferedReader()
+                                                .use { file ->
+                                                    file.readText().split(";").map { it.toInt() }
+                                                }
+
+                                        val updatedStats = stats.toMutableList()
+                                        listDetections.value.forEach { detection ->
+                                            val index = detectionNames.indexOf(detection.first)
+                                            if (index != -1) {
+                                                updatedStats[index] += 1
+                                            }
+                                        }
+
+                                        context.openFileOutput(
+                                            "stats.txt",
+                                            Context.MODE_PRIVATE
+                                        ).use { stream ->
+                                            updatedStats.forEach { stat ->
+                                                stream.write("$stat;".toByteArray())
+                                            }
+                                        }
+                                    }
+                                }
 
                                 Toast.makeText(
                                     context, "Image saved.", Toast.LENGTH_SHORT

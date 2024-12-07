@@ -72,7 +72,10 @@ fun TakeImagePage(navController: NavHostController) {
     }
 
     val metaDataFiles =
-        context.filesDir.listFiles { file -> file.extension == "txt" } ?: emptyArray()
+        context.filesDir.listFiles { file -> file.extension == "txt" && file.name != "stats.txt" }
+            ?: emptyArray()
+
+    val statsFile = context.filesDir.listFiles { file -> file.name == "stats.txt" }?.firstOrNull()
 
     @Suppress("DEPRECATION") val pick =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -241,12 +244,12 @@ fun TakeImagePage(navController: NavHostController) {
                 )
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
                 .background(
-                    if (metaDataFiles.isEmpty()) br2 else br3,
+                    if (statsFile != null) br2 else br3,
                     shape = RoundedCornerShape(20.dp)
                 )
                 .align(Alignment.CenterStart),
                 onClick = {
-                    if (metaDataFiles.isNotEmpty()) {
+                    if (statsFile != null) {
                         TODO("Add statistics page")
                     } else {
                         Toast.makeText(context, "No data available.", Toast.LENGTH_SHORT).show()
@@ -256,7 +259,7 @@ fun TakeImagePage(navController: NavHostController) {
                     modifier = Modifier.fillMaxSize(.4f),
                     painter = painterResource(id = R.drawable.stats),
                     contentDescription = "upload image from gallery",
-                    tint = if (metaDataFiles.isEmpty()) br4 else br5
+                    tint = if (statsFile != null) br5 else br4
                 )
             }
 
