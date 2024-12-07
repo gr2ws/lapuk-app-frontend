@@ -231,6 +231,7 @@ fun SavePreviewDialog(
                                     shape = RoundedCornerShape(10.dp)
                                 ), enabled = isAnalysisSuccessful.value, onClick = {
                                 onDismiss(false)
+
                                 val fileName = "${listDetections.value.size}; ${
                                     SimpleDateFormat(
                                         "MM:dd:yy, HH:mm:ss", java.util.Locale.getDefault()
@@ -241,6 +242,7 @@ fun SavePreviewDialog(
                                 context.openFileOutput(
                                     "$fileName.png", Context.MODE_PRIVATE
                                 ).use { stream ->
+                                    stream.channel.truncate(0) // Clear the stream
                                     imageResult.value?.compress(
                                         Bitmap.CompressFormat.PNG, 100, stream
                                     ) ?: imageBitmap.compress(
@@ -252,8 +254,9 @@ fun SavePreviewDialog(
                                 context.openFileOutput(
                                     "$fileName.txt", Context.MODE_APPEND
                                 ).use { stream ->
-                                    var num = 1
+                                    stream.channel.truncate(0) // Clear the stream
 
+                                    var num = 1
                                     if (listDetections.value.isEmpty()) stream.write("No waste items detected.".toByteArray())
                                     else listDetections.value.forEach {
                                         stream.write(
@@ -263,13 +266,15 @@ fun SavePreviewDialog(
                                     }
                                 }
 
-                                // read stats file
                                 if (listDetections.value.isNotEmpty()) {
+                                    // read stats file
                                     try { // try reading file
                                         val stats =
                                             context.openFileInput("stats.txt").bufferedReader()
                                                 .use { file ->
-                                                    file.readText().split(";").map { it.toInt() }
+                                                    file.readText().split(";")
+                                                        .filter { it.isNotBlank() }
+                                                        .map { it.toInt() }
                                                 }
 
                                         val updatedStats = stats.toMutableList()
@@ -281,25 +286,27 @@ fun SavePreviewDialog(
                                         }
 
                                         context.openFileOutput(
-                                            "stats.txt",
-                                            Context.MODE_PRIVATE
+                                            "stats.txt", Context.MODE_PRIVATE
                                         ).use { stream ->
+                                            stream.channel.truncate(0) // Clear the stream
                                             updatedStats.forEach { stat ->
                                                 stream.write("$stat;".toByteArray())
                                             }
                                         }
                                     } catch (e: Exception) {
                                         context.openFileOutput(
-                                            "stats.txt",
-                                            Context.MODE_PRIVATE
+                                            "stats.txt", Context.MODE_PRIVATE
                                         ).use { stream ->
-                                            stream.write("0;0;0;0;0;0;0;0;0;0".toByteArray())
+                                            stream.channel.truncate(0) // Clear the stream
+                                            stream.write("0;0;0;0;0;0;0;0;0;0;".toByteArray())
                                         } // Create stats.txt if it does not exist
 
                                         val stats =
                                             context.openFileInput("stats.txt").bufferedReader()
                                                 .use { file ->
-                                                    file.readText().split(";").map { it.toInt() }
+                                                    file.readText().split(";")
+                                                        .filter { it.isNotBlank() }
+                                                        .map { it.toInt() }
                                                 }
 
                                         val updatedStats = stats.toMutableList()
@@ -311,9 +318,9 @@ fun SavePreviewDialog(
                                         }
 
                                         context.openFileOutput(
-                                            "stats.txt",
-                                            Context.MODE_PRIVATE
+                                            "stats.txt", Context.MODE_PRIVATE
                                         ).use { stream ->
+                                            stream.channel.truncate(0) // Clear the stream
                                             updatedStats.forEach { stat ->
                                                 stream.write("$stat;".toByteArray())
                                             }

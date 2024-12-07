@@ -53,8 +53,9 @@ fun SegregatePage(navController: NavController) {
     val context = LocalContext.current
 
     val imageFiles = context.filesDir.listFiles { file -> file.extension == "png" } ?: emptyArray()
+
     val metaDataFiles =
-        context.filesDir.listFiles { file -> file.extension == "txt" } ?: emptyArray()
+        context.filesDir.listFiles { file -> file.extension == "txt" && file.name != "stats.txt" } ?: emptyArray()
     val itemCount = imageFiles.size
 
     Box(modifier = Modifier.fillMaxSize()) {

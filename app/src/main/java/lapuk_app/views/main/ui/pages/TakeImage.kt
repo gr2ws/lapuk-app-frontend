@@ -80,11 +80,6 @@ fun TakeImagePage(navController: NavHostController) {
         }
     }
 
-
-    val metaDataFiles =
-        context.filesDir.listFiles { file -> file.extension == "txt" && file.name != "stats.txt" }
-            ?: emptyArray()
-
     val statsFile = context.filesDir.listFiles { file -> file.name == "stats.txt" }?.firstOrNull()
 
     @Suppress("DEPRECATION") val pick =
@@ -249,12 +244,12 @@ fun TakeImagePage(navController: NavHostController) {
                 .size(65.dp)
                 .border(
                     3.dp,
-                    if (metaDataFiles.isEmpty()) br4 else br5,
+                    if (statsFile != null) br5 else br4,
                     shape = RoundedCornerShape(20.dp)
                 )
                 .shadow(elevation = 2.dp, shape = RoundedCornerShape(20.dp))
                 .background(
-                    if (statsFile != null) br2 else br3,
+                    if (statsFile != null) br3 else br2,
                     shape = RoundedCornerShape(20.dp)
                 )
                 .align(Alignment.CenterStart),
@@ -296,27 +291,27 @@ fun StatisticsCard(onDismissDialog: (Boolean) -> Unit) {
 
     val stats = context.openFileInput("stats.txt").bufferedReader()
         .use { file ->
-            file.readText().split(";").map { it.toInt() }
+            file.readText().split(";").filter { it.isNotBlank() }.map { it.toInt() }
         }
 
     val detectionNames = listOf(
-        "battery",
-        "biological",
-        "cardboard",
-        "clothes",
-        "glass",
-        "metal",
-        "paper",
-        "plastic",
-        "sanitary waste",
-        "shoes"
+        "Battery",
+        "Biological",
+        "Cardboard",
+        "Clothes",
+        "Glass",
+        "Metal",
+        "Paper",
+        "Plastic",
+        "Sanitary Waste",
+        "Shoes"
     )
 
     AlertDialog(onDismissRequest = {
         onDismissDialog(false)
     },
         containerColor = br1,
-        title = { Text(text = "Statistics", style = Typography.labelLarge) },
+        title = { Text(text = "Total Detections", style = Typography.labelLarge) },
         modifier = Modifier
             .fillMaxHeight(.73f)
             .requiredWidth(400.dp)
