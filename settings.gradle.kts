@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "lapuk-app-frontend"
 include(":app")
- 

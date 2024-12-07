@@ -1,5 +1,8 @@
 [versions]
 agp = "8.7.2"
+okhttp_logging_interceptor = "4.10.0"
+retrofit = "2.9.0"
+gson = "2.10.1"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -10,9 +13,19 @@ activityCompose = "1.9.3"
 composeBom = "2024.11.00"
 coreSplashscreen = "1.0.1"
 navigationCompose = "2.8.4"
+accompanist_pager = "0.29.0-alpha"
+accompanist_pager_indicators = "0.29.0-alpha"
+cameraCore = "1.4.0"
+cameraCamera2 = "1.4.0"
+cameraLifecycle = "1.4.0"
+cameraView = "1.4.0"
+graphicsShapesAndroid = "1.0.1"
+storage = "1.5.0"
+okhttp = "4.11.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -28,9 +41,20 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist_pager" }
+accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanist_pager_indicators" }
+androidx-camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "cameraCore" }
+androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraCamera2" }
+androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraLifecycle" }
+androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraView" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+androidx-graphics-shapes-android = { group = "androidx.graphics", name = "graphics-shapes-android", version.ref = "graphicsShapesAndroid" }
+androidx-storage = { group = "androidx.test.services", name = "storage", version.ref = "storage" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version = "2.9.0" }
+retrofit_converter_gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+okhttp_logging_interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp_logging_interceptor" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
