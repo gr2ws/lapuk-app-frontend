@@ -1,5 +1,6 @@
 package lapuk_app.views.main
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,6 +33,7 @@ import lapuk_app.views.main.ui.pages.AboutUsPage
 import lapuk_app.views.main.ui.pages.ArticlesPage
 import lapuk_app.views.main.ui.pages.ContactUsPage
 import lapuk_app.views.main.ui.pages.FAQsPage
+import lapuk_app.views.main.ui.pages.HeatmapsPage
 import lapuk_app.views.main.ui.pages.HomePage
 import lapuk_app.views.main.ui.pages.PrivacyPolicyPage
 import lapuk_app.views.main.ui.pages.SegregatePage
@@ -42,6 +44,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         Thread.sleep(2000)
         installSplashScreen().apply {
@@ -114,7 +118,11 @@ fun MainScreen() {
                             ArticlesPage()
                         }
 
-                        composable("heatmap") { TODO() }
+                        composable("heatmap") {
+                            lastNavigatedRoute = "heatmap"
+                            indexOfLastPageAccessed = 3
+                            HeatmapsPage()
+                        }
 
                         composable("info") {
                             CallSpeechBubble(lastNavigatedRoute) { option ->
