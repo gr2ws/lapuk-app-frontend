@@ -66,6 +66,20 @@ fun SavePreviewDialog(
 ) {
     val context = LocalContext.current
 
+    // index of name and total is the same, list of totals is stats.txt
+    val detectionNames = listOf(
+        "battery",
+        "biological",
+        "cardboard",
+        "clothes",
+        "glass",
+        "metal",
+        "paper",
+        "plastic",
+        "sanitary waste",
+        "shoes"
+    )
+
     // result values
     val analysisResults = remember { mutableStateOf<AnalysisResults?>(null) }
     val imageResult = remember { mutableStateOf<Bitmap?>(imageBitmap) }
@@ -249,6 +263,8 @@ fun SavePreviewDialog(
                                         num++
                                     }
                                 }
+
+                                // read stats file
 
                                 Toast.makeText(
                                     context, "Image saved.", Toast.LENGTH_SHORT

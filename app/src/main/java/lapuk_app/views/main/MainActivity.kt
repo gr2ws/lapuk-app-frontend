@@ -1,5 +1,6 @@
 package lapuk_app.views.main
 
+import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -42,6 +43,7 @@ import lapuk_app.views.main.ui.theme.LapukTheme
 
 class MainActivity : ComponentActivity() {
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -197,7 +199,7 @@ fun CallSpeechBubble(
         "segregate" -> SegregatePage(rememberNavController())
         "segregate/take-image" -> TakeImagePage(rememberNavController())
         "articles" -> ArticlesPage()
-        "heatmap" -> TODO()
+        "heatmap" -> HeatmapsPage()
     }
 
     Box(
