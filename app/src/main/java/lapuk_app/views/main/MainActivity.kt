@@ -186,6 +186,10 @@ fun CallSpeechBubble(
         "info/contact-us" -> ContactUsPage()
         "info/privacy-policy" -> PrivacyPolicyPage()
         "info/frequently-asked-questions" -> FAQsPage()
+        "segregate" -> SegregatePage(rememberNavController())
+        "segregate/take-image" -> TakeImagePage(rememberNavController())
+        "articles" -> ArticlesPage()
+        "heatmap" -> TODO()
     }
 
     Box(
