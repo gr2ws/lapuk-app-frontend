@@ -2,7 +2,6 @@
 agp = "8.7.2"
 okhttp_logging_interceptor = "4.10.0"
 retrofit = "2.9.0"
-agp = "8.7.3"
 gson = "2.10.1"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"

@@ -3,6 +3,7 @@ package lapuk_app.views.main.ui.pages
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -105,9 +106,7 @@ fun HeatmapsPage() {
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
             contentAlignment = Alignment.Center
-        ) {
-            HeatmapScreen()
-        }
+        ) { HeatmapScreen() }
     }
 }
 
@@ -117,12 +116,6 @@ fun HeatmapScreen() {
     var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     val repository = HeatmapRepository()
 
-    // Define state for zoom and translation (panning)
-    val scale by remember { mutableStateOf(1.5f) } // Increased scale for zoom-in
-    val offsetX by remember { mutableStateOf(0f) }
-    val offsetY by remember { mutableStateOf(0f) }
-
-    // Container size for heatmap
 
     LaunchedEffect(Unit) {
         fetchHeatmap(context = context, repository = repository) { bitmap ->
@@ -133,7 +126,7 @@ fun HeatmapScreen() {
     imageBitmap?.let { bitmap ->
         Box(
             modifier = Modifier
-                .size(200.dp, 200.dp)
+                .size(200.dp, 200.dp) //heatmap container
         ) {
             Image(
                 bitmap = bitmap,
@@ -141,10 +134,10 @@ fun HeatmapScreen() {
                 modifier = Modifier
                     .align(Alignment.Center)
                     .graphicsLayer(
-                        scaleX = scale,
-                        scaleY = scale,
-                        translationX = offsetX,
-                        translationY = offsetY
+                        scaleX = 1.5f,
+                        scaleY = 1.5f,
+                        translationX = 0f,
+                        translationY = 0f
                     )
             )
         }
@@ -154,33 +147,42 @@ fun HeatmapScreen() {
 }
 
 
-fun fetchHeatmap(
-    context: Context,
-    repository: HeatmapRepository,
-    onSuccess: (ImageBitmap) -> Unit
-) {
+fun fetchHeatmap(context: Context, repository: HeatmapRepository, onSuccess: (ImageBitmap) -> Unit)
+{
     repository.getHeatmap().enqueue(object : Callback<ResponseBody> {
         override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-            if (response.isSuccessful) {
-                // Log the response to confirm the image is received
-                Log.d("API Response", "Image received, size: ${response.body()?.contentLength()} bytes")
-
+            if (!response.isSuccessful) {
+                Toast.makeText(
+                    context,
+                    "Failed to fetch heatmap (check API code): ${response.code()}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
                 // Get the image as a byte stream and decode it
                 val inputStream = response.body()?.byteStream()
                 val bitmap = BitmapFactory.decodeStream(inputStream)
-                if (bitmap != null) {
-                    onSuccess(bitmap.asImageBitmap()) // Return the bitmap to the UI
-                } else {
-                    Log.e("API Error", "Failed to decode the image")
-                }
-            } else {
-                Log.e("API Error", "Failed to fetch heatmap: ${response.code()}")
+
+
+                if (bitmap == null)
+                    Toast.makeText(
+                        context,
+                        "API Error: Failed to decode heatmap image",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                else {
+                    onSuccess(bitmap.asImageBitmap())
+                } // Return the bitmap to the UI
+
             }
         }
 
         override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
             // Handle network failure
-            Log.e("Network Error", "Error fetching heatmap image", t)
+            Toast.makeText(
+                context,
+                "Server/Internet connection error!",
+                Toast.LENGTH_LONG
+            ).show()
         }
     })
 }
