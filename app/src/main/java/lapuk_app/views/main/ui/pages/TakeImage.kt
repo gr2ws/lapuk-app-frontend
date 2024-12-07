@@ -10,19 +10,25 @@ import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,6 +50,8 @@ import lapuk_app.views.main.ShowCameraView
 import lapuk_app.views.main.getPermission
 import lapuk_app.views.main.hasPermission
 import lapuk_app.views.main.takePhoto
+import lapuk_app.views.main.ui.theme.Typography
+import lapuk_app.views.main.ui.theme.br1
 import lapuk_app.views.main.ui.theme.br2
 import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br4
@@ -60,6 +68,7 @@ import lapuk_app.views.main.ui.theme.br5
 fun TakeImagePage(navController: NavHostController) {
     var hasCameraPermission by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
+    var showStatsDialog by remember { mutableStateOf(false) }
 
     val imageDialog = remember { mutableStateOf<Bitmap?>(null) }
 
@@ -70,6 +79,7 @@ fun TakeImagePage(navController: NavHostController) {
             setEnabledUseCases(CameraController.IMAGE_CAPTURE)
         }
     }
+
 
     val metaDataFiles =
         context.filesDir.listFiles { file -> file.extension == "txt" && file.name != "stats.txt" }
@@ -250,7 +260,7 @@ fun TakeImagePage(navController: NavHostController) {
                 .align(Alignment.CenterStart),
                 onClick = {
                     if (statsFile != null) {
-                        TODO("Add statistics page")
+                        showStatsDialog = true
                     } else {
                         Toast.makeText(context, "No data available.", Toast.LENGTH_SHORT).show()
                     }
@@ -271,6 +281,71 @@ fun TakeImagePage(navController: NavHostController) {
                 if (showDialog) rebindCamera()
             }
 
+            if (showStatsDialog) {
+                StatisticsCard { showStatsDialog = it }
+            }
+
         }
     }
+}
+
+@Composable
+fun StatisticsCard(onDismissDialog: (Boolean) -> Unit) {
+
+    val context = LocalContext.current
+
+    val stats = context.openFileInput("stats.txt").bufferedReader()
+        .use { file ->
+            file.readText().split(";").map { it.toInt() }
+        }
+
+    val detectionNames = listOf(
+        "battery",
+        "biological",
+        "cardboard",
+        "clothes",
+        "glass",
+        "metal",
+        "paper",
+        "plastic",
+        "sanitary waste",
+        "shoes"
+    )
+
+    AlertDialog(onDismissRequest = {
+        onDismissDialog(false)
+    },
+        containerColor = br1,
+        title = { Text(text = "Statistics", style = Typography.labelLarge) },
+        modifier = Modifier
+            .fillMaxHeight(.73f)
+            .requiredWidth(400.dp)
+            .padding(20.dp),
+        shape = RoundedCornerShape(15.dp),
+        text = {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(stats.size) { index ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = detectionNames[index],
+                            style = Typography.bodyLarge
+                        )
+                        Text(
+                            text = stats[index].toString(),
+                            style = Typography.bodyLarge
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onDismissDialog(false) }) {
+                Text("Back", style = Typography.labelMedium)
+            }
+        })
 }
