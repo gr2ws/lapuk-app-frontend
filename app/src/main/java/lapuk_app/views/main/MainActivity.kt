@@ -6,6 +6,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -19,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -76,9 +79,10 @@ fun MainScreen() {
     var lastNavigatedRoute by remember { mutableStateOf("home") }
     var indexOfLastPageAccessed = 0
 
+    var showSpeechBubble by remember { mutableStateOf(false) }
+
     LapukTheme {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
+        Scaffold(modifier = Modifier.fillMaxSize(),
 
             topBar = {
                 TopBar()
@@ -126,34 +130,6 @@ fun MainScreen() {
                             HeatmapsPage()
                         }
 
-                        composable("info") {
-                            CallSpeechBubble(lastNavigatedRoute) { option ->
-                                when (option) {
-                                    "FAQs" -> {
-                                        navController.navigate("info/frequently-asked-questions")
-                                        indexOfLastPageAccessed = 4
-                                    }
-
-                                    "About Us" -> {
-                                        navController.navigate("info/about-us")
-                                        indexOfLastPageAccessed = 4
-                                    }
-
-                                    "Contact Us" -> {
-                                        lastNavigatedRoute = "info/contact-us"
-                                        navController.navigate("info/contact-us")
-                                        indexOfLastPageAccessed = 4
-                                    }
-
-                                    "Privacy Policy" -> {
-                                        lastNavigatedRoute = "info/privacy-policy"
-                                        navController.navigate("info/privacy-policy")
-                                        indexOfLastPageAccessed = 4
-                                    }
-                                }
-                            }
-                        }
-
                         composable("info/frequently-asked-questions") {
                             lastNavigatedRoute = "info/frequently-asked-questions"
                             FAQsPage()
@@ -175,36 +151,84 @@ fun MainScreen() {
                             indexOfLastPageAccessed = 4
                         }
                     }
-                }
-            },
 
-            bottomBar = {
-                if (lastNavigatedRoute != "home")
-                    BottomBar(navController, indexOfLastPageAccessed)
+                    if (showSpeechBubble) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.1f))
+                                .clickable { showSpeechBubble = false },
+                            contentAlignment = Alignment.BottomEnd
+                        ) {
+                            CallSpeechBubble(lastNavigatedRoute) { option ->
+                                when (option) {
+                                    "FAQs" -> {
+                                        lastNavigatedRoute = "info/frequently-asked-questions"
+
+                                        navController.navigate("info/frequently-asked-questions") {
+                                            popUpTo(navController.graph.startDestinationId) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                        }
+                                        indexOfLastPageAccessed = 4
+                                    }
+
+                                    "About Us" -> {
+                                        lastNavigatedRoute = "info/about-us"
+
+                                        navController.navigate("info/about-us") {
+                                            popUpTo(navController.graph.startDestinationId) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                        }
+                                        indexOfLastPageAccessed = 4
+                                    }
+
+                                    "Contact Us" -> {
+                                        lastNavigatedRoute = "info/contact-us"
+
+                                        navController.navigate("info/contact-us") {
+                                            popUpTo(navController.graph.startDestinationId) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                        }
+                                        indexOfLastPageAccessed = 4
+                                    }
+
+                                    "Privacy Policy" -> {
+                                        lastNavigatedRoute = "info/privacy-policy"
+                                        navController.navigate("info/privacy-policy") {
+                                            popUpTo(navController.graph.startDestinationId) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                        }
+                                        indexOfLastPageAccessed = 4
+                                    }
+                                }
+                                showSpeechBubble = false
+                            }
+                        }
+                    }
+
+                }
+            }, bottomBar = {
+                if (lastNavigatedRoute != "home") BottomBar(navController,
+                    indexOfLastPageAccessed,
+                    onTapInfo = { showSpeechBubble = it })
             })
     }
 }
 
 @Composable
 fun CallSpeechBubble(
-    lastRoute: String,
-    onOptionClick: (String) -> Unit
+    lastRoute: String, onOptionClick: (String) -> Unit
 ) {
-    // Render the last-navigated route here
-    when (lastRoute) {
-        "info/about-us" -> AboutUsPage()
-        "info/contact-us" -> ContactUsPage()
-        "info/privacy-policy" -> PrivacyPolicyPage()
-        "info/frequently-asked-questions" -> FAQsPage()
-        "segregate" -> SegregatePage(rememberNavController())
-        "segregate/take-image" -> TakeImagePage(rememberNavController())
-        "articles" -> ArticlesPage()
-        "heatmap" -> HeatmapsPage()
-    }
-
     Box(
-        modifier = Modifier.offset(x = (-10).dp, y = 28.dp),
-        contentAlignment = Alignment.BottomEnd
+        modifier = Modifier.offset(x = (-10).dp, y = 28.dp), contentAlignment = Alignment.BottomEnd
     ) {
         // Overlay SpeechBubble
         SpeechBubble(lastRoute, onOptionClick)
