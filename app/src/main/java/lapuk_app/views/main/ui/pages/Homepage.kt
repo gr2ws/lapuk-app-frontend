@@ -2,6 +2,13 @@
 
 package lapuk_app.views.main.ui.pages
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,6 +17,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,25 +57,40 @@ data class NavigationItem(
 ) { /* ... */ }
 
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun HomePage(navController: NavController) {
 
     val isExpanded = remember { mutableStateOf(false) }
     val isLoading = remember { mutableStateOf(false) }
     val firstRow = listOf(
-        NavigationItem("Segregate", painterResource(id = R.drawable.segregate), route = "segregate"),
+        NavigationItem(
+            "Segregate", painterResource(id = R.drawable.segregate), route = "segregate"
+        ),
         NavigationItem("Articles", painterResource(id = R.drawable.articles), route = "articles"),
         NavigationItem("Heatmaps", painterResource(id = R.drawable.heatmaps), route = "heatmap"),
-        NavigationItem("FAQs", painterResource(id = R.drawable.faqs), route = "info/frequently-asked-questions"),
+        NavigationItem(
+            "FAQs", painterResource(id = R.drawable.faqs), route = "info/frequently-asked-questions"
+        ),
     )
     val firstSelectedIndex = remember { mutableStateOf(-1) }
     val secondRow = listOf(
-        NavigationItem("About Us", painterResource(id = R.drawable.about_us), route = "info/about-us"),
-        NavigationItem("Contact Us", painterResource(id = R.drawable.contact_us), route = "info/contact-us"),
-        NavigationItem("Privacy Policy", painterResource(id = R.drawable.privacy_policy), route = "info/privacy-policy"),
+        NavigationItem(
+            "About Us", painterResource(id = R.drawable.about_us), route = "info/about-us"
+        ),
+        NavigationItem(
+            "Contact Us", painterResource(id = R.drawable.contact_us), route = "info/contact-us"
+        ),
+        NavigationItem(
+            "Privacy Policy",
+            painterResource(id = R.drawable.privacy_policy),
+            route = "info/privacy-policy"
+        ),
     )
     val secondSelectedIndex = remember { mutableStateOf(-1) }
     val coroutineScope = rememberCoroutineScope() // Coroutine scope for handling delays
+
+
 
     Column(
         modifier = Modifier
@@ -97,23 +120,22 @@ fun HomePage(navController: NavController) {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(52.dp)
-                                .clip(shape)
-                                .border(width = 1.dp, color = br6, shape = shape)
-                                .clickable {
-                                    isExpanded.value = true
-                                    isLoading.value = true
-                                    firstSelectedIndex.value = index // Set the selected index when clicked
-                                    coroutineScope.launch {
-                                        kotlinx.coroutines.delay(1500) // 1.5-second delay
-                                        navController.navigate(navigationItem.route)
-                                    }
+                        Box(modifier = Modifier
+                            .size(52.dp)
+                            .clip(shape)
+                            .border(width = 1.dp, color = br6, shape = shape)
+                            .clickable {
+                                isExpanded.value = true
+                                isLoading.value = true
+                                firstSelectedIndex.value =
+                                    index // Set the selected index when clicked
+                                coroutineScope.launch {
+                                    kotlinx.coroutines.delay(800) // 1.5-second delay
+                                    navController.navigate(navigationItem.route)
                                 }
-                                .background(if (firstSelectedIndex.value == index) br5 else br2),
-                            contentAlignment = Alignment.Center
-                        ) {
+                            }
+                            .background(if (firstSelectedIndex.value == index) br5 else br2),
+                            contentAlignment = Alignment.Center) {
                             Icon(
                                 painter = navigationItem.symbol,
                                 contentDescription = navigationItem.name,
@@ -125,8 +147,7 @@ fun HomePage(navController: NavController) {
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Box(
-                            modifier = Modifier
-                                .padding(horizontal = 12.dp),
+                            modifier = Modifier.padding(horizontal = 12.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -159,24 +180,23 @@ fun HomePage(navController: NavController) {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(52.dp)
-                                .clip(shape)
-                                .background(br2)
-                                .border(width = 1.dp, color = br6, shape = shape)
-                                .clickable {
-                                    isExpanded.value = true
-                                    isLoading.value = true
-                                    secondSelectedIndex.value = index // Set the selected index when clicked
-                                    coroutineScope.launch {
-                                        kotlinx.coroutines.delay(1500) // 1.5-second delay
-                                        navController.navigate(navigationItem.route)
-                                    }
+                        Box(modifier = Modifier
+                            .size(52.dp)
+                            .clip(shape)
+                            .background(br2)
+                            .border(width = 1.dp, color = br6, shape = shape)
+                            .clickable {
+                                isExpanded.value = true
+                                isLoading.value = true
+                                secondSelectedIndex.value =
+                                    index // Set the selected index when clicked
+                                coroutineScope.launch {
+                                    kotlinx.coroutines.delay(800) // 1.5-second delay
+                                    navController.navigate(navigationItem.route)
                                 }
-                                .background(if (secondSelectedIndex.value == index) br5 else br2),
-                            contentAlignment = Alignment.Center
-                        ) {
+                            }
+                            .background(if (secondSelectedIndex.value == index) br5 else br2),
+                            contentAlignment = Alignment.Center) {
                             Icon(
                                 painter = navigationItem.symbol,
                                 contentDescription = navigationItem.name,
@@ -188,9 +208,7 @@ fun HomePage(navController: NavController) {
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            contentAlignment = Alignment.Center
+                            modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 modifier = Modifier,
@@ -206,26 +224,31 @@ fun HomePage(navController: NavController) {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // help affordance
-        if (!isExpanded.value) {
+        AnimatedVisibility(visible = !isExpanded.value, enter = fadeIn(snap(450)), exit = fadeOut(snap(0))) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
-                    .clickable { isExpanded.value = true },
-                contentAlignment = Alignment.Center
+                    .clickable {
+                        isExpanded.value = true
+                    }, contentAlignment = Alignment.Center
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.circle_help),
                     contentDescription = "help",
-                    modifier = Modifier
-                        .size(24.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }
 
+
         // when help button is clicked...
-        else {
+        AnimatedVisibility(
+            visible = isExpanded.value,
+            enter = slideInVertically { 600 },
+            exit = slideOutVertically { 600 },
+            modifier = Modifier.fillMaxHeight(.75f),
+            ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -234,7 +257,6 @@ fun HomePage(navController: NavController) {
                     .background(br2),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 // render app description section (NOT loading section)
                 if (!isLoading.value) {
                     // top icon
@@ -242,14 +264,14 @@ fun HomePage(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 16.dp)
-                            .clickable { isExpanded.value = false },
-                        contentAlignment = Alignment.Center
+                            .clickable {
+                                isExpanded.value = false
+                            }, contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.circle_help),
                             contentDescription = "help",
-                            modifier = Modifier
-                                .size(24.dp)  // Adjust the size of the icon as needed
+                            modifier = Modifier.size(24.dp)  // Adjust the size of the icon as needed
                         )
                     }
 
@@ -258,11 +280,14 @@ fun HomePage(navController: NavController) {
                     AppDescriptionComponent()
                 }
                 // render loading section
-                else { LoadingComponent() }
+                else {
+                    LoadingComponent()
+                }
             }
         }
     }
 }
+
 
 @Composable
 fun PageDetails() {
@@ -272,9 +297,7 @@ fun PageDetails() {
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            modifier = Modifier,
-            text = "Welcome",
-            style = Typography.titleMedium
+            modifier = Modifier, text = "Welcome", style = Typography.titleMedium
         )
     }
 
@@ -309,8 +332,7 @@ fun AppDescriptionComponent() {
             tint = br6
         )
         Text(
-            modifier = Modifier
-                .padding(end = 24.dp),
+            modifier = Modifier.padding(end = 24.dp),
             text = "LAPUK is a waste recognition app designed to identify waste in a snap. It analyzes waste images and provides details for easier segregation. With LAPUK, you can contribute to a cleaner and greener environment—one scan at a time!",
             style = Typography.bodySmall,
             lineHeight = 12.sp * 1.6,
@@ -330,17 +352,14 @@ fun LoadingComponent() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CircularProgressIndicator(
-                modifier = Modifier.size(64.dp),
-                color = br5,
-                strokeWidth = 6.dp
+                modifier = Modifier.size(64.dp), color = br5, strokeWidth = 6.dp
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // "Now Loading..." text
             Text(
-                text = "Now Loading...",
-                style = Typography.bodyLarge
+                text = "Now Loading...", style = Typography.bodyLarge
             )
         }
     }

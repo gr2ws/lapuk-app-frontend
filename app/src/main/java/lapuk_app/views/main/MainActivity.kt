@@ -6,6 +6,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -94,7 +100,8 @@ fun MainScreen() {
                         .padding(innerPadding)
                         .shadow(2.dp)
                         .zIndex(1f)
-                        .fillMaxSize()
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.BottomEnd
                 ) {
                     NavHost(
                         navController = navController,
@@ -152,71 +159,81 @@ fun MainScreen() {
                         }
                     }
 
-                    if (showSpeechBubble) {
+                    AnimatedVisibility(
+                        visible = showSpeechBubble,
+                        enter = fadeIn(tween(100)),
+                        exit = fadeOut(tween(100))
+                    ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .background(Color.Black.copy(alpha = 0.1f))
                                 .clickable { showSpeechBubble = false },
-                            contentAlignment = Alignment.BottomEnd
-                        ) {
-                            CallSpeechBubble(lastNavigatedRoute) { option ->
-                                when (option) {
-                                    "FAQs" -> {
-                                        lastNavigatedRoute = "info/frequently-asked-questions"
-
-                                        navController.navigate("info/frequently-asked-questions") {
-                                            popUpTo(navController.graph.startDestinationId) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                        }
-                                        indexOfLastPageAccessed = 4
-                                    }
-
-                                    "About Us" -> {
-                                        lastNavigatedRoute = "info/about-us"
-
-                                        navController.navigate("info/about-us") {
-                                            popUpTo(navController.graph.startDestinationId) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                        }
-                                        indexOfLastPageAccessed = 4
-                                    }
-
-                                    "Contact Us" -> {
-                                        lastNavigatedRoute = "info/contact-us"
-
-                                        navController.navigate("info/contact-us") {
-                                            popUpTo(navController.graph.startDestinationId) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                        }
-                                        indexOfLastPageAccessed = 4
-                                    }
-
-                                    "Privacy Policy" -> {
-                                        lastNavigatedRoute = "info/privacy-policy"
-                                        navController.navigate("info/privacy-policy") {
-                                            popUpTo(navController.graph.startDestinationId) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                        }
-                                        indexOfLastPageAccessed = 4
-                                    }
-                                }
-                                showSpeechBubble = false
-                            }
-                        }
+                        )
                     }
 
+                    AnimatedVisibility(
+                        visible = showSpeechBubble,
+                        enter = slideInVertically(
+                            animationSpec = tween(100),
+                            initialOffsetY = { 500 }),
+                        exit = slideOutVertically(
+                            animationSpec = tween(100),
+                            targetOffsetY = { 500 })
+                    ) {
+                        CallSpeechBubble(lastNavigatedRoute) { option ->
+                            when (option) {
+                                "FAQs" -> {
+                                    lastNavigatedRoute = "info/frequently-asked-questions"
+                                    navController.navigate("info/frequently-asked-questions") {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                    }
+                                    indexOfLastPageAccessed = 4
+                                }
+
+                                "About Us" -> {
+                                    lastNavigatedRoute = "info/about-us"
+                                    navController.navigate("info/about-us") {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                    }
+                                    indexOfLastPageAccessed = 4
+                                }
+
+                                "Contact Us" -> {
+                                    lastNavigatedRoute = "info/contact-us"
+                                    navController.navigate("info/contact-us") {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                    }
+                                    indexOfLastPageAccessed = 4
+                                }
+
+                                "Privacy Policy" -> {
+                                    lastNavigatedRoute = "info/privacy-policy"
+                                    navController.navigate("info/privacy-policy") {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                    }
+                                    indexOfLastPageAccessed = 4
+                                }
+                            }
+                            showSpeechBubble = false
+                        }
+                    }
                 }
             }, bottomBar = {
-                if (lastNavigatedRoute != "home") BottomBar(navController,
+                if (lastNavigatedRoute != "home") BottomBar(
+                    navController,
                     indexOfLastPageAccessed,
                     onTapInfo = { showSpeechBubble = it })
             })
