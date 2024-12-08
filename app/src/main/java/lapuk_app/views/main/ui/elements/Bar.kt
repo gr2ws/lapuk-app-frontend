@@ -59,7 +59,7 @@ fun TopBar() {
  * @param navController The NavController used for navigation.
  */
 @Composable
-fun BottomBar(navController: NavController, pageClicked : Int) {
+fun BottomBar(navController: NavController, pageClicked : Int, onTapInfo: (Boolean) -> Unit) {
     var selectedItem = pageClicked
 
     val items = listOf(
@@ -92,18 +92,22 @@ fun BottomBar(navController: NavController, pageClicked : Int) {
                 selected = selectedItem == index,
                 onClick = {
                     selectedItem = index
-                    navController.navigate(navigationLabel[index]) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            if (index == 0)
-                                inclusive = true
-                            else
-                                saveState = true
+                    if (index == 4) {
+                        onTapInfo(true)
+                    } else {
+                        onTapInfo(false)
+
+                        navController.navigate(navigationLabel[index]) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                if (index == 0)
+                                    inclusive = true
+                                else
+                                    saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = (index != 0) // Don't restore state for 'Home'
                         }
-                        launchSingleTop = true
-                        restoreState = (index != 0) // Don't restore state for 'Home'
                     }
-     // DO NOT REMOVE THE CODE BELOW ! IT WILL RUIN THE SPEECH BUBBLE FUNCTIONALITY //
-                if (item == "Info") { navController.navigate("info") }
             },
                 colors = NavigationBarItemColors(
                     selectedIconColor = Color.White,

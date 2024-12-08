@@ -33,14 +33,14 @@ import lapuk_app.views.main.ui.theme.br3
 import lapuk_app.views.main.ui.theme.br6
 import lapuk_app.views.main.ui.theme.wh1
 
-data class Item (
+data class Item(
     val name: String,
     val route: String
-) {/*...*/}
+) {/*...*/ }
 
 //@Preview// //
 @Composable
-fun SpeechBubble(lastRoute : String, onOptionClick: (String) -> Unit) {
+fun SpeechBubble(lastRoute: String, onOptionClick: (String) -> Unit) {
 
     var selectedOption by remember { mutableStateOf<String?>(null) }
     val options = listOf(
@@ -52,11 +52,15 @@ fun SpeechBubble(lastRoute : String, onOptionClick: (String) -> Unit) {
 
     // container (Box) for everything
     Box(
-        modifier = Modifier.width(160.dp),
+        modifier = Modifier
+            .width(160.dp)
+            .clip(RoundedCornerShape(12.dp)),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier,
+            modifier = Modifier
+                .width(160.dp)
+                .clip(RoundedCornerShape(12.dp)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -74,7 +78,8 @@ fun SpeechBubble(lastRoute : String, onOptionClick: (String) -> Unit) {
                         .fillMaxWidth(1f)
                         .clickable {
                             selectedOption = option.name
-                            onOptionClick(option.name) }
+                            onOptionClick(option.name)
+                        }
                         .background(
                             color = if (lastRoute == option.route) br6 else br3
                         ),
@@ -107,12 +112,13 @@ fun SpeechBubble(lastRoute : String, onOptionClick: (String) -> Unit) {
                             .toPath()
                             .asComposePath()
                         onDrawBehind {
-                            rotate(degrees = 90f, pivot = Offset(size.width/2, size.height/2))
+                            rotate(degrees = 90f, pivot = Offset(size.width / 2, size.height / 2))
                             {
                                 drawPath(
                                     roundedPolygonPath,
                                     color = if (selectedOption == "Privacy Policy"
-                                        || lastRoute == "info/privacy-policy") br6 else br3
+                                        || lastRoute == "info/privacy-policy"
+                                    ) br6 else br3
                                 )
                             }
                         }
