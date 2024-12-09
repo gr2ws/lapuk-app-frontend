@@ -139,7 +139,7 @@ data class AnalysisResults(
  * @param callback The callback function to handle the analysis results.
  */
 fun requestAnalysis(encodedString: String, callback: (AnalysisResults) -> Unit) {
-    val request = Request.Builder().url("http://10.8.130.186:5000/detect").post(
+    val request = Request.Builder().url("http://192.168.254.102:5000/detect").post(
         encodedString.toRequestBody("text/plain".toMediaTypeOrNull())
     ).build()
 
