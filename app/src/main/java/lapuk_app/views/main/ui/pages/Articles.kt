@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,7 +34,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,6 +42,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.lapuk_app.R
 import lapuk_app.views.main.ui.theme.Typography
 import lapuk_app.views.main.ui.theme.br2
+import lapuk_app.views.main.ui.theme.wh1
 
 data class Article(
     val imageResource: Int,
@@ -219,6 +218,7 @@ fun ArticleCard(article: Article) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .background(wh1)
                         .height(650.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceBetween
