@@ -30,6 +30,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -139,13 +140,20 @@ data class AnalysisResults(
  * @param callback The callback function to handle the analysis results.
  */
 fun requestAnalysis(encodedString: String, callback: (AnalysisResults) -> Unit) {
-    val request = Request.Builder().url("http://10.8.130.186:5000/detect").post(
-        encodedString.toRequestBody("text/plain".toMediaTypeOrNull())
-    ).build()
+    val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .build()
+
+    val request = Request.Builder()
+        .url("https://lapuk-app-backend-1d8f0518796c.herokuapp.com/detect")
+        .post(encodedString.toRequestBody("text/plain".toMediaTypeOrNull()))
+        .build()
 
     Log.e("Request", "Sending request to analyze image.")
 
-    OkHttpClient().newCall(request).enqueue(object : Callback {
+    client.newCall(request).enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
             Log.e("Request", "Request failed: $e")
         }
@@ -157,8 +165,7 @@ fun requestAnalysis(encodedString: String, callback: (AnalysisResults) -> Unit) 
                 Thread.sleep(100) // artificial delay to stop errors in emulator
 
                 val responseReceived = response.body?.string() ?: "Error: No response received."
-                val analysisReceived =
-                    Gson().fromJson(responseReceived, ResultsReceived::class.java)
+                val analysisReceived = Gson().fromJson(responseReceived, ResultsReceived::class.java)
                 val mappedPairs = analysisReceived.detections.map { it.toTuple() }
 
                 val analysisResults = AnalysisResults(analysisReceived.image, mappedPairs)

@@ -13,7 +13,7 @@ class HeatmapRepository {
 
     init {
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.8.130.186:5000") // Ensure this matches your Flask server IP
+            .baseUrl("https://lapuk-app-backend-1d8f0518796c.herokuapp.com") // Ensure this matches your Flask server IP
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
