@@ -185,7 +185,6 @@ fun SavePreviewDialog(
                                 .height(50.dp)
                                 .width(90.dp)
                                 .border(2.dp, br5, shape = RoundedCornerShape(10.dp))
-                                .shadow(2.dp, shape = RoundedCornerShape(10.dp))
                                 .background(br3, shape = RoundedCornerShape(10.dp)), onClick = {
                                 onDismiss(false)
                             }) {
@@ -202,7 +201,6 @@ fun SavePreviewDialog(
                                     if (isAnalysisSuccessful.value) br5 else br4,
                                     shape = RoundedCornerShape(10.dp)
                                 )
-                                .shadow(2.dp, shape = RoundedCornerShape(10.dp))
                                 .background(
                                     if (isAnalysisSuccessful.value) br3 else br2,
                                     shape = RoundedCornerShape(10.dp)
@@ -225,7 +223,6 @@ fun SavePreviewDialog(
                                     if (isAnalysisSuccessful.value) br5 else br4,
                                     shape = RoundedCornerShape(10.dp)
                                 )
-                                .shadow(2.dp, shape = RoundedCornerShape(10.dp))
                                 .background(
                                     if (isAnalysisSuccessful.value) br3 else br2,
                                     shape = RoundedCornerShape(10.dp)
