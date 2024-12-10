@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
@@ -178,7 +179,9 @@ fun TakeImagePage(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(start = 16.dp, top = 30.dp),
-                color = Color.White
+                color = Color.White,
+                style = Typography.bodyMedium,
+                lineHeight = 14.sp * 1.8
             )
         }
 
