@@ -81,7 +81,7 @@ fun AboutUsPage() {
             body = "A reliable and positive presence--Lanz is always willing to help out and keep everyone organized. His contributions motivate others to stay focused, creating a productive and friendly team experience.",
             igLink = "https://www.instagram.com/saccharine__7393/",
             liLink = "https://www.linkedin.com/in/lanz-alexander-malto/",
-            fbLink = "https://www.facebook.com/g2r.w5a"
+            fbLink = "https://www.facebook.com/Lance.the.Gallade"
         )
     )
 
